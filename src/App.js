@@ -15,6 +15,8 @@ import 'remixicon/fonts/remixicon.css'
 function App() {
   return (
     <Router>
+
+      
       <Navbar /> {/* Include Navbar */}
       <div className="p-4"> {/* Add padding to content */}
         <Routes>

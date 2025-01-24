@@ -16,7 +16,16 @@ export default function HomeCare() {
   ];
 
   return (
+
+
     <div className="overflow-x-auto">
+
+
+        <h1 className='text-2xl font-semibold mb-4'>Home Care Booking</h1>
+       
+      
+
+
       <table className="min-w-full table-auto border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-100 text-left">
@@ -47,5 +56,11 @@ export default function HomeCare() {
         </tbody>
       </table>
     </div>
+
+
+
+
+
+
   )
 }
