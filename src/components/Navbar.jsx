@@ -70,7 +70,7 @@ const Navbar = () => {
 
         <li>
           <NavLink
-            to="/physiotherapist/details"
+            to="/physiotherapistdetails"
             className={({ isActive }) =>
               isActive
                 ? 'text-white font-semibold border-b-2 border-blue-500'

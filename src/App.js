@@ -30,7 +30,7 @@ function App() {
 
           {/* Physiotherapist */}
           <Route path="/physiotherapist" element={<Physiotherapist />} />
-          <Route path="/physiotherapist/details" element={<PhysiotherapistDetails />} />
+          <Route path="/physiotherapistdetails" element={<PhysiotherapistDetails />} />
 
           {/* Default route or 404 */}
           <Route path="*" element={<div>Page Not Found</div>} />
