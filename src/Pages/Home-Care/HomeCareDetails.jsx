@@ -1,7 +1,12 @@
 import React from 'react'
 import HospitalAssistCard from '../../components/HospitalAssistCard'
-
+import { useLocation } from 'react-router-dom'
+import moment from 'moment';
 export default function HomeCareDetails() {
+  const location=useLocation()
+  const details=location.state || {}
+  console.log({details})
+
   return (
     <div>
          <div className='flex justify-between items-center'>
@@ -20,37 +25,40 @@ export default function HomeCareDetails() {
                      </div>
                      <div className="flex items-center text-[0.9125rem]/5 justify-between mb-4">
                        <h1 className="font-bold">Patient Name:</h1>
-                       <h1 className="font-light">Anusree</h1>
+                       <h1 className="font-light">{details?.patient_name}</h1>
                      </div>
-         
+                     <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
+                       <h1 className="font-bold">Age:</h1>
+                       <h1 className="font-light">{details?.patient_age}</h1>
+                     </div>
                   
          
                   
                      <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
                        <h1 className="font-bold">Gender:</h1>
-                       <h1 className="font-light">Female</h1>
+                       <h1 className="font-light">{details?.patient_gender}</h1>
                      </div>
    
                      
                      <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
                            <h1 className="font-bold">Mobility</h1>
-                           <h1 className="font-light">Walk</h1>
+                           <h1 className="font-light">{details?.patient_mobility}</h1>
                          </div>
          
                      <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
                        <h1 className="font-bold">Date:</h1>
-                       <h1 className="font-light">02/02/2025</h1>
+                       <h1 className="font-light">{moment(details?.start_date).format('MMMM Do YYYY, h:mm:ss a')}</h1>
                      </div>
          
                      <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
                        <h1 className="font-bold">Day / 2X7:</h1>
-                       <h1 className="font-light">Day</h1>
+                       <h1 className="font-light">{details?.days_week}</h1>
                      </div>
 
                      
                      <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
                        <h1 className="font-bold">General/Specialized:</h1>
-                       <h1 className="font-light">General</h1>
+                       <h1 className="font-light">{details?.general_specialized}</h1>
                      </div>
          
                     
@@ -61,8 +69,7 @@ export default function HomeCareDetails() {
                      <div>
                        <h1 className="mb-2 text-[0.9125rem]/5 font-bold mt-4">Home Address</h1>
                        <div class="text-[0.8125rem]/5 mt-1 text-slate-600">
-                         Door No. 48, 1541, Ponnurunni-Chalikkavattom Rd, Ponnurunni
-                         East, Ponnurunni, Vyttila, Kochi, Ernakulam, Kerala
+                       {details?.patient_location}
                        </div>
                        <div class="mt-2 font-semibold text-[0.9125rem]/5 text-teal-800">
                          674532
@@ -83,18 +90,18 @@ export default function HomeCareDetails() {
          
                      <div className="flex items-center text-[0.9125rem]/5 justify-between mb-4">
                        <h1 className="font-bold">Contact Number:</h1>
-                       <h1 className="font-light">+91 98787878778</h1>
+                       <h1 className="font-light">+91 {details?.patient_contact_no}</h1>
                      </div>
-                     <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
+                     {/* <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
                        <h1 className="font-bold">Booking ID:</h1>
                        <h1 className="font-light">#HF65HH8</h1>
-                     </div>
+                     </div> */}
          
                  
          
                      <div className="flex items-center justify-between text-[0.9125rem]/5">
                        <h1 className="font-bold">Booking Date:</h1>
-                       <h1 className="font-light">12/12/2024</h1>
+                       <h1 className="font-light"> {moment(details?.created_date).format("Do MMMM YYYY")}</h1>
                      </div>
    
                      </div>
@@ -104,12 +111,12 @@ export default function HomeCareDetails() {
                     
                      
                      <div className='flex justify-between items-center mb-6'>
-                     <h1 className="text-lg font-semibold">Additional Requerment</h1>
+                     <h1 className="text-lg font-semibold">Additional Requirements</h1>
                      <button className='bg-teal-600 text-stone-50 px-6 text-sm h-8'>Edit</button>
                      </div>
          
                      <div class="text-[0.8125rem]/5 mt-1 text-slate-600">
-                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sodales tortor et malesuada lacinia. Nullam in mi sed lorem condimentum faucibus id ut neque. Suspendisse gravida tempus magna vitae fringilla. Morbi tempor tellus sed sapien molestie, tempus imperdiet lorem sodales.  eros quis felis rhoncus venenatis.
+                    {details?.requirements}
                        </div>
                    
    

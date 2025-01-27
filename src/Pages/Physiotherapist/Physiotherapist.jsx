@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL } from "../../config";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 export default function Physiotherapist() {
   const [patients, setPatients] = useState([]);
@@ -58,7 +59,7 @@ export default function Physiotherapist() {
             <td className="px-4 py-2 border-b">{patient?.patient_contact_no}</td>
             <td className="px-4 py-2 border-b">{patient?.patient_age}</td>
             <td className="px-4 py-2 border-b">{patient?.patient_gender}</td>
-            <td className="px-4 py-2 border-b">{patient?.start_date}</td>
+            <td className="px-4 py-2 border-b">{moment(patient?.start_date).format('Do MMMM YYYY')}</td>
             <td className="px-4 py-2 border-b">{patient?.therapy_type}</td>
             <td className="px-4 py-2 border-b">{patient?.prefered_time}</td>
             <td className="px-4 py-2 border-b">{patient?.status}</td>

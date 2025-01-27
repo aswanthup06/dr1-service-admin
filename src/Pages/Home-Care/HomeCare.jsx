@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL } from "../../config";
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 export default function HomeCare() {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate=useNavigate()
   console.log({patients})
   useEffect(() => {
     axios
@@ -49,10 +52,11 @@ export default function HomeCare() {
         </thead>
         <tbody>
           {patients.map((patient, index) => (
-            <tr key={index} className="hover:bg-gray-50">
+            <tr key={index} onClick={() =>
+              navigate("/details", { state: patient })}  className="hover:bg-gray-50">
               <td className="px-4 py-2 border-b">{patient?.patient_name}</td>
               <td className="px-4 py-2 border-b">{patient?.patient_contact_no}</td>
-              <td className="px-4 py-2 border-b">{patient?.start_date}</td>
+              <td className="px-4 py-2 border-b">{moment(patient?.start_date).format('Do MMMM YYYY')}</td>
               <td className="px-4 py-2 border-b">{patient?.patient_age}</td>
 
               <td className="px-4 py-2 border-b">{patient?.patient_gender}</td>

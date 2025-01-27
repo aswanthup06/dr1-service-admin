@@ -1,6 +1,7 @@
 import React from "react";
 import HospitalAssistCard from "../../components/HospitalAssistCard";
 import { useLocation } from "react-router-dom";
+import moment from "moment";
 
 export default function PhysiotherapistDetails() {
   const location = useLocation();
@@ -36,7 +37,9 @@ export default function PhysiotherapistDetails() {
 
             <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
               <h1 className="font-bold">Date:</h1>
-              <h1 className="font-light">{details?.start_date}</h1>
+              <h1 className="font-light">
+                {moment(details?.start_date).format("Do MMMM YYYY")}
+              </h1>
             </div>
 
             <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
@@ -46,7 +49,7 @@ export default function PhysiotherapistDetails() {
 
             <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
               <h1 className="font-bold">Therapy Type</h1>
-              <h1 className="font-light">{details?.patient_gender}</h1>
+              <h1 className="font-light">{details?.therapy_type}</h1>
             </div>
 
             <div>
@@ -82,7 +85,9 @@ export default function PhysiotherapistDetails() {
 
                 <div className="flex items-center justify-between text-[0.9125rem]/5">
                   <h1 className="font-bold">Booking Date:</h1>
-                  <h1 className="font-light">{details?.created_date}</h1>
+                  <h1 className="font-light">
+                    {moment(details?.created_date).format("Do MMMM YYYY")}
+                  </h1>
                 </div>
               </div>
             </div>
