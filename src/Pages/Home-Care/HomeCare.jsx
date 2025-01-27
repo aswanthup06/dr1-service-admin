@@ -56,9 +56,8 @@ export default function HomeCare() {
               navigate("/details", { state: patient })}  className="hover:bg-gray-50">
               <td className="px-4 py-2 border-b">{patient?.patient_name}</td>
               <td className="px-4 py-2 border-b">{patient?.patient_contact_no}</td>
-              <td className="px-4 py-2 border-b">{moment(patient?.start_date).format('Do MMMM YYYY')}</td>
+              <td className="px-4 py-2 border-b">{patient?.start_date ? moment(patient?.start_date).format('Do MMMM YYYY') : 'null'}</td>
               <td className="px-4 py-2 border-b">{patient?.patient_age}</td>
-
               <td className="px-4 py-2 border-b">{patient?.patient_gender}</td>
               <td className="px-4 py-2 border-b">{patient?.general_specialized}</td>
               <td className="px-4 py-2 border-b">{patient?.patient_mobility}</td>
