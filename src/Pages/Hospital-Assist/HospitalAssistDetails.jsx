@@ -1,7 +1,13 @@
+
 import React from 'react'
 import HospitalAssistCard from '../../components/HospitalAssistCard'
+import { useLocation } from 'react-router-dom'
 
-export default function HospitalAssistDetails() {
+export default function HospitalAssistDetails() { 
+ const location = useLocation()
+ const passedState = location.state ||{}
+ console.log({passedState})
+ 
   return (
     <div>
       <div className='flex justify-between items-center'>
