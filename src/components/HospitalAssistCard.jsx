@@ -6,7 +6,9 @@ export default function HospitalAssistCard() {
     <div class="flex justify-between">
 
     <div className='w-full flex justify-between items-center mb-3'>
-    <div class="font-extrabold text-slate-900">Varun Madhav</div>
+    <div class="font-extrabold text-slate-900">Varun Madhav
+      <h1 className='text-xs font-light'>79934 76367</h1>
+    </div>
     <button className='bg-green-600 text-white py-1 px-3 rounded-full'>Assign</button>
     </div>
 
