@@ -1,23 +1,37 @@
 import React, { useState, useEffect } from "react";
 import HospitalAssistCard from "../../components/HospitalAssistCard";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import moment from "moment";
 import axios from "axios";
 import { BASE_URL } from "../../config";
 export default function HomeCareDetails() {
   const location = useLocation();
   const details = location.state || {};
-
-  const [isEditing, setIsEditing] = useState(false);
+  const currentDate = moment().format("YYYY-MM-DD");
+  console.log({ details });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [fileToView, setFileToView] = useState(null);
+  const [isEdit, setIsEdit] = useState(false);
   const [nurses, setNurses] = useState([]);
   console.log({ nurses });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const toggleEdit = () => {
-    setIsEditing(!isEditing);
-  };
+  const [formData, setFormdata] = useState({
+    id: details?.id || "",
+    patient_name: details?.patient_name || "",
+    patient_mobility: details?.patient_mobility || "",
+    patient_age: details?.patient_age || "",
+    patient_gender: details?.patient_gender || "",
+    patient_location: details?.patient_location || "",
+    start_date: details?.start_date || "",
+    end_date: details?.end_date || "",
+    time: details?.time || "",
+    days_week: details?.days_week || "",
+    requirements: details?.requirements || "",
+  });
+  console.log({ formData });
   const [price, setPrice] = useState(details?.price || "");
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (details?.price !== null) {
       setPrice(details?.price);
@@ -28,7 +42,7 @@ export default function HomeCareDetails() {
       const response = await axios.post(`${BASE_URL}/services/allassists`, {
         id: details.id,
       });
-
+      console.log("resppppppnurrr", response);
       setNurses(response.data.data);
       setLoading(false);
     } catch (err) {
@@ -38,7 +52,7 @@ export default function HomeCareDetails() {
   };
 
   useEffect(() => {
-    fetchNurses(); // Call the function to fetch nurses when the component mounts
+    fetchNurses();
   }, [details.id]);
 
   const handleAddPrice = async () => {
@@ -60,7 +74,82 @@ export default function HomeCareDetails() {
     }
   };
   const handlePriceChange = (event) => {
-    setPrice(event.target.value); // Update local price state with new input value
+    const { value } = event.target;
+
+    // Parsing the value as a number if the value is not empty, otherwise, leave it empty
+    const numericValue = value === "" ? "" : parseFloat(value);
+
+    setPrice(numericValue); // Update the price state directly
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    // if (name === "start_date") {
+    //   const formattedDate = moment(value).format("YYYY-MM-DD HH:mm:ss.SSS");
+    //   setFormdata((prevData) => ({
+    //     ...prevData,
+    //     [name]: formattedDate, // Update the start_date with the correct format
+    //   }));
+    // } else {
+    //   setFormdata((prevData) => ({
+    //     ...prevData,
+    //     [name]: value,
+    //   }));
+    // }
+    console.log(name, value);
+    setFormdata((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmitChange = async (event) => {
+    event.preventDefault();
+    try {
+      const responseData = await axios.post(
+        `${BASE_URL}/services/updatehomeservice`,
+        formData
+      );
+      console.log(responseData);
+      if (responseData.data.success) {
+        alert("service updated");
+        setIsEdit(false);
+        navigate(0);
+      } else {
+        alert("failed to update the data");
+      }
+    } catch (err) {
+      console.log("error------>", err);
+      alert("error while submitting the message");
+    }
+  };
+
+  const toggleEdit = () => {
+    if (isEdit) {
+      console.log("form data saved----", formData);
+    }
+    setIsEdit(!isEdit);
+  };
+
+  /////////////////image handling///////
+  const handleView = (file) => {
+    setFileToView(file);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setFileToView(null);
+  };
+
+  const isImage = (file) => {
+    // Check if the file is an image based on its extension
+    return /\.(jpg|jpeg|png|gif)$/i.test(file);
+  };
+
+  const isPDF = (file) => {
+    // Check if the file is a PDF
+    return /\.pdf$/i.test(file);
   };
 
   return (
@@ -72,10 +161,15 @@ export default function HomeCareDetails() {
             Confirmed<i className="ri-arrow-down-s-line ml-3 "></i>
           </button>
           <button
-            onClick={toggleEdit}
+            onClick={(event) => {
+              if (isEdit) {
+                handleSubmitChange(event);
+              }
+              toggleEdit();
+            }}
             className="bg-teal-600 px-6 font-light h-10 text-white"
           >
-            {isEditing ? "Save" : "Edit"}
+            {isEdit ? "Save" : "Edit"}
           </button>
         </div>
       </div>
@@ -89,11 +183,13 @@ export default function HomeCareDetails() {
             <div className="flex items-center text-[0.9125rem]/5 justify-between mb-4">
               <h1 className="font-bold">Patient Name:</h1>
               {/* <h1 className="font-light">{details?.patient_name}</h1> */}
-              {isEditing ? (
+              {isEdit ? (
                 <input
                   className="w-5/12 h-8 text-right px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   type="text"
-                  defaultValue={details?.patient_name || "Name"}
+                  name="patient_name"
+                  value={formData.patient_name}
+                  onChange={handleChange}
                 />
               ) : (
                 // <span>{details?.patient_name}</span>
@@ -102,11 +198,13 @@ export default function HomeCareDetails() {
             </div>
             <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
               <h1 className="font-bold">Age:</h1>
-              {isEditing ? (
+              {isEdit ? (
                 <input
                   className="w-5/12 h-8 text-right px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   type="text"
-                  placeholder={details?.patient_age || "Age"}
+                  value={formData.patient_age}
+                  onChange={handleChange}
+                  name="patient_age"
                 />
               ) : (
                 <h1 className="font-light">{details?.patient_age}</h1>
@@ -115,13 +213,15 @@ export default function HomeCareDetails() {
 
             <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
               <h1 className="font-bold">Gender:</h1>
-              {isEditing ? (
+              {isEdit ? (
                 <select
                   className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                  defaultValue={details?.patient_gender || ""}
+                  name="patient_gender"
+                  onChange={handleChange}
+                  value={formData.patient_gender}
                 >
                   <option value="" disabled>
-                    {details?.patient_gender || "Select Gender"}
+                    {/* {details?.patient_gender || "Select Gender"} */}
                   </option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
@@ -134,13 +234,15 @@ export default function HomeCareDetails() {
 
             <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
               <h1 className="font-bold">Mobility</h1>
-              {isEditing ? (
+              {isEdit ? (
                 <select
                   className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                  defaultValue={details?.patient_mobility || ""}
+                  name="patient_mobility"
+                  onChange={handleChange}
+                  value={formData.patient_mobility}
                 >
                   <option value="" disabled>
-                    {details?.patient_gender || "Select Gender"}
+                    {/* {details?.patient_gender || "Select Gender"} */}
                   </option>
                   <option value="walk">Walk</option>
                   <option value="wheelchair">Wheelchair</option>
@@ -151,9 +253,9 @@ export default function HomeCareDetails() {
               )}
             </div>
 
-            <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
+            {/* <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
               <h1 className="font-bold">Start Date:</h1>
-              {isEditing ? (
+              {isEdit ? (
                 <input
                   className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   type="date"
@@ -166,30 +268,62 @@ export default function HomeCareDetails() {
                   )}
                 </h1>
               )}
+            </div> */}
+            <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
+              <h1 className="font-bold">Start Date:</h1>
+              {isEdit ? (
+                <input
+                  className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  type="date"
+                  name="start_date"
+                  value={moment(formData?.start_date).format("YYYY-MM-DD")}
+                  onChange={handleChange}
+                  // onChange={(e) => console.log(e.target.value)}
+                  min={currentDate}
+                />
+              ) : (
+                <h1 className="font-light">
+                  {details?.start_date
+                    ? moment(details?.start_date).format("MMMM Do YYYY")
+                    : ""}
+                </h1>
+              )}
             </div>
 
             <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
               <h1 className="font-bold">End Date:</h1>
-
-              <input
-                className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                type="date"
-                onChange={(e) => console.log(e.target.value)}
-              />
+              {isEdit ? (
+                <input
+                  className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  type="date"
+                  name="end_date"
+                  value={moment(formData?.end_date).format("YYYY-MM-DD")}
+                  onChange={handleChange}
+                  min={currentDate}
+                />
+              ) : (
+                <h1 className="font-light">
+                  {details?.end_date
+                    ? moment(details?.end_date).format("MMMM Do YYYY")
+                    : ""}
+                </h1>
+              )}
             </div>
 
             <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
               <h1 className="font-bold">Day / 2X7:</h1>
-              {isEditing ? (
+              {isEdit ? (
                 <select
                   className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                  defaultValue={details?.days_week || ""}
+                  name="days_week"
+                  onChange={handleChange}
+                  value={formData.days_week}
                 >
                   <option value="" disabled>
-                    {details?.days_week || "Select Gender"}
+                    {/* {details?.days_week || "Select Gender"} */}
                   </option>
                   <option value="day">day</option>
-                  <option value="night"></option>
+                  <option value="24*7">24*7</option>
                 </select>
               ) : (
                 <h1 className="font-light">{details?.days_week}</h1>
@@ -198,16 +332,18 @@ export default function HomeCareDetails() {
 
             <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
               <h1 className="font-bold">General/Specialized:</h1>
-              {isEditing ? (
+              {isEdit ? (
                 <select
                   className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                  defaultValue={details?.general_specialized || ""}
+                  name="general_specialized"
+                  onChange={handleChange}
+                  value={formData.general_specialized}
                 >
                   <option value="" disabled>
-                    {details?.general_specialized || "Select "}
+                    {/* {details?.general_specialized || "Select "} */}
                   </option>
                   <option value="general">general</option>
-                  <option value="specialized">Specialized</option>
+                  <option value="specialized">specialized</option>
                 </select>
               ) : (
                 <h1 className="font-light">{details?.general_specialized}</h1>
@@ -218,12 +354,16 @@ export default function HomeCareDetails() {
               <h1 className="mb-2 text-[0.9125rem]/5 font-bold mt-4">
                 Home Address
               </h1>
-              {isEditing ? (
+              {isEdit ? (
                 <textarea
                   className="w-full h-24 p-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none"
-                  placeholder={
-                    details?.patient_location || "Enter details here"
-                  }
+                  // placeholder={
+                  //   details?.patient_location || "Enter details here"
+                  // }
+                  type="text"
+                  value={formData.patient_location}
+                  onChange={handleChange}
+                  name="patient_location"
                   rows="4"
                 />
               ) : (
@@ -232,8 +372,20 @@ export default function HomeCareDetails() {
                 </div>
               )}
 
-              <div class="mt-2 font-semibold text-[0.9125rem]/5 text-teal-800">
-                674532
+              {/* <div class="flex mt-2 font-semibold text-[0.9125rem]/5 text-teal-800"> */}
+              <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
+                <h1 className="font-bold">Pincode:</h1>
+                {isEdit ? (
+                  <input
+                    className="w-5/12 h-8 text-right px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    type="text"
+                    name="pincode"
+                    value={formData.pincode}
+                    onChange={handleChange}
+                  />
+                ) : (
+                  <h1 className="font-light">{details?.pincode}</h1>
+                )}
               </div>
             </div>
           </div>
@@ -272,10 +424,14 @@ export default function HomeCareDetails() {
                   </h1>
                 </div>
 
-                {isEditing ? (
+                {isEdit ? (
                   <textarea
                     className="w-full h-32 p-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none"
-                    placeholder={details?.requirements || "Enter details here"}
+                    // placeholder={details?.requirements || "Enter details here"}
+                    type="text"
+                    value={formData.requirements}
+                    onChange={handleChange}
+                    name="requirements"
                     rows="4"
                   />
                 ) : (
@@ -290,7 +446,7 @@ export default function HomeCareDetails() {
                   Additional Attachment
                 </h1>
 
-                <div className="flex items-center justify-between">
+                {/* <div className="flex items-center justify-between">
                   <h1 className="font-light">Report.pdf</h1>
                   <button className="text-sky-600">View</button>
                 </div>
@@ -298,8 +454,57 @@ export default function HomeCareDetails() {
                 <div className="flex items-center justify-between mt-4">
                   <h1 className="font-light">Report2.pdf</h1>
                   <button className="text-sky-600">View</button>
-                </div>
+                </div> */}
+
+                {Object.entries(details?.medical_documents || {}).map(
+                  ([key, url], index) => (
+                    <div
+                      className="flex items-center justify-between mt-4"
+                      key={index}
+                    >
+                      <h1 className="font-light">{key}</h1>{" "}
+                      {/* Use the key as the file name */}
+                      <button
+                        className="text-sky-600"
+                        onClick={() => handleView({ name: key, url })}
+                      >
+                        View
+                      </button>
+                    </div>
+                  )
+                )}
+
+                {/* modallllllllll */}
               </div>
+
+              {/* Modal to view the attachment */}
+              {isModalOpen && (
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+                  <div className="bg-white p-4 rounded-lg">
+                    <button className="text-red-600" onClick={closeModal}>
+                      Close
+                    </button>
+                    <div className="mt-4">
+                      {isImage(fileToView.url) ? (
+                        <img
+                          src={fileToView.url}
+                          alt={fileToView.name}
+                          className="max-w-full max-h-96"
+                        />
+                      ) : isPDF(fileToView.url) ? (
+                        <iframe
+                          src={fileToView.url}
+                          width="100%"
+                          height="500px"
+                          title="PDF Viewer"
+                        />
+                      ) : (
+                        <p>Unsupported file type</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -317,14 +522,14 @@ export default function HomeCareDetails() {
                     </button>
                   )}
                 </div>
-
                 <div>
                   <input
                     className="border w-full h-10 px-4"
-                    type="text"
+                    type="number"
                     name="price"
-                    value={details?.price || ""}
+                    value={price}
                     onChange={handlePriceChange}
+                    disabled={details?.price !== null}
                   />
                 </div>
               </div>
