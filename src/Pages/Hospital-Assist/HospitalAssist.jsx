@@ -4,17 +4,29 @@ import { useNavigate } from 'react-router-dom'
 
 export default function HospitalAssist() {
   const[hospAssitant, sethospassitant] = useState([])
+  const[loading, setloading] = useState(true)
+  const[error, setError] = useState(null)
   console.log("hospAssitant",hospAssitant)
   const navigate = useNavigate()
   useEffect(()=>{
-    // alert("uyhghghhh")
+   
     axios.get("http://localhost:3003/services/gethospitalassistantreqs").then((response)=>{
       sethospassitant(response.data.data)
       console.log("response-------->",response.data.data)
+      setloading(false)
+    }).catch((err)=>{
+        setError(err.message)
+        setloading(false)
     })
   },[])
   
+if(loading){
+  return <div>Loading..........</div>
+}
 
+if(error){
+  return <div>Error: {error}</div>
+}
 
   return (
     <div className="overflow-x-auto">
@@ -33,7 +45,7 @@ export default function HospitalAssist() {
       </thead>
       <tbody>
         {hospAssitant.map((patient, index) => (
-          <tr key={index} onClick={() => navigate('/hospital-assist/details', { state: patient })} // Correct
+          <tr key={index} onClick={() => navigate('/hospital-assist/details', { state: patient })} 
           className="hover:bg-gray-50">
             <td className="px-4 py-2 border-b">{patient?.patient_name}</td>
             <td className="px-4 py-2 border-b">{patient?.patient_contact_no}</td>
