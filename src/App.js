@@ -11,6 +11,8 @@ import HospitalAssistDetails from './Pages/Hospital-Assist/HospitalAssistDetails
 import Physiotherapist from './Pages/Physiotherapist/Physiotherapist';
 import PhysiotherapistDetails from './Pages/Physiotherapist/PhysiotherapistDetails';
 import 'remixicon/fonts/remixicon.css'
+import ServiceAdminLogin from './Pages/ServiceAdminLogin/ServiceAdminLogin';
+import 'remixicon/fonts/remixicon.css'
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
 
           {/* Default route or 404 */}
           <Route path="*" element={<div>Page Not Found</div>} />
+          <Route path="/AdLo" element={<ServiceAdminLogin />} />
+
         </Routes>
       </div>
     </Router>
