@@ -4,11 +4,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import moment from "moment";
 import axios from "axios";
 import { BASE_URL } from "../../config";
-export default function HomeCareDetails() {
+export default function HomeCareformData() {
   const location = useLocation();
-  const details = location.state || {};
+  const data_id = location.state || {};
+  console.log("datadatadatadatadatadatadatadatadata", data_id);
+  // const formData = location.state || {};
   const currentDate = moment().format("YYYY-MM-DD");
-  console.log({ details });
+  // console.log({ formData });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fileToView, setFileToView] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
@@ -17,30 +19,48 @@ export default function HomeCareDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [formData, setFormdata] = useState({
-    id: details?.id || "",
-    patient_name: details?.patient_name || "",
-    patient_mobility: details?.patient_mobility || "",
-    patient_age: details?.patient_age || "",
-    patient_gender: details?.patient_gender || "",
-    patient_location: details?.patient_location || "",
-    start_date: details?.start_date || "",
-    end_date: details?.end_date || "",
-    time: details?.time || "",
-    days_week: details?.days_week || "",
-    requirements: details?.requirements || "",
+    id: data_id,
+    patient_name: "",
+    patient_mobility: "",
+    patient_age: "",
+    patient_gender: "",
+    patient_location: "",
+    start_date: "",
+    end_date: "",
+    time: "",
+    days_week: "",
+    requirements: "",
   });
   console.log({ formData });
-  const [price, setPrice] = useState(details?.price || "");
+  const [price, setPrice] = useState(formData?.price || "");
   const navigate = useNavigate();
   useEffect(() => {
-    if (details?.price !== null) {
-      setPrice(details?.price);
+    if (formData?.price !== null) {
+      setPrice(formData?.price);
     }
-  }, [details?.price]);
+  }, [formData?.price]);
+
+  const fetchformData = async () => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/services/getorderdetails`,
+        {
+          id: data_id,
+          type: "homecare_service",
+        }
+      );
+
+      setFormdata(response.data.data);
+      setLoading(false);
+    } catch (err) {
+      setError("Failed to fetch nurses.");
+      setLoading(false);
+    }
+  };
   const fetchNurses = async () => {
     try {
       const response = await axios.post(`${BASE_URL}/services/allassists`, {
-        id: details.id,
+        id: data_id,
       });
       console.log("resppppppnurrr", response);
       setNurses(response.data.data);
@@ -52,13 +72,14 @@ export default function HomeCareDetails() {
   };
 
   useEffect(() => {
+    fetchformData();
     fetchNurses();
-  }, [details.id]);
+  }, [data_id]);
 
   const handleAddPrice = async () => {
     try {
       const response = await axios.post(`${BASE_URL}/services/priceadd`, {
-        id: details?.id,
+        id: formData?.id,
         price: price,
         type: "homecare_service",
       });
@@ -182,7 +203,7 @@ export default function HomeCareDetails() {
             </div>
             <div className="flex items-center text-[0.9125rem]/5 justify-between mb-4">
               <h1 className="font-bold">Patient Name:</h1>
-              {/* <h1 className="font-light">{details?.patient_name}</h1> */}
+             
               {isEdit ? (
                 <input
                   className="w-5/12 h-8 text-right px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
@@ -192,8 +213,7 @@ export default function HomeCareDetails() {
                   onChange={handleChange}
                 />
               ) : (
-                // <span>{details?.patient_name}</span>
-                <h1 className="font-light">{details?.patient_name}</h1>
+                <h1 className="font-light">{formData?.patient_name}</h1>
               )}
             </div>
             <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
@@ -207,7 +227,7 @@ export default function HomeCareDetails() {
                   name="patient_age"
                 />
               ) : (
-                <h1 className="font-light">{details?.patient_age}</h1>
+                <h1 className="font-light">{formData?.patient_age}</h1>
               )}
             </div>
 
@@ -218,17 +238,17 @@ export default function HomeCareDetails() {
                   className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   name="patient_gender"
                   onChange={handleChange}
-                  value={formData.patient_gender}
+                  value={formData.patient_gender || ""}
                 >
                   <option value="" disabled>
-                    {/* {details?.patient_gender || "Select Gender"} */}
+                    {formData?.patient_gender || "Select Gender"}
                   </option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                   <option value="other">Other</option>
                 </select>
               ) : (
-                <h1 className="font-light">{details?.patient_gender}</h1>
+                <h1 className="font-light">{formData?.patient_gender}</h1>
               )}
             </div>
 
@@ -239,36 +259,20 @@ export default function HomeCareDetails() {
                   className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   name="patient_mobility"
                   onChange={handleChange}
-                  value={formData.patient_mobility}
+                  value={formData.patient_mobility || ""}
                 >
                   <option value="" disabled>
-                    {/* {details?.patient_gender || "Select Gender"} */}
+                    {/* {formData?.patient_gender || "Select Gender"} */}
                   </option>
                   <option value="walk">Walk</option>
                   <option value="wheelchair">Wheelchair</option>
                   <option value="stretcher">Stretcher</option>
                 </select>
               ) : (
-                <h1 className="font-light">{details?.patient_mobility}</h1>
+                <h1 className="font-light">{formData?.patient_mobility}</h1>
               )}
             </div>
 
-            {/* <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
-              <h1 className="font-bold">Start Date:</h1>
-              {isEdit ? (
-                <input
-                  className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                  type="date"
-                  onChange={(e) => console.log(e.target.value)}
-                />
-              ) : (
-                <h1 className="font-light">
-                  {moment(details?.start_date).format(
-                    "MMMM Do YYYY, h:mm:ss a"
-                  )}
-                </h1>
-              )}
-            </div> */}
             <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
               <h1 className="font-bold">Start Date:</h1>
               {isEdit ? (
@@ -283,8 +287,8 @@ export default function HomeCareDetails() {
                 />
               ) : (
                 <h1 className="font-light">
-                  {details?.start_date
-                    ? moment(details?.start_date).format("MMMM Do YYYY")
+                  {formData?.start_date
+                    ? moment(formData?.start_date).format("MMMM Do YYYY")
                     : ""}
                 </h1>
               )}
@@ -303,8 +307,8 @@ export default function HomeCareDetails() {
                 />
               ) : (
                 <h1 className="font-light">
-                  {details?.end_date
-                    ? moment(details?.end_date).format("MMMM Do YYYY")
+                  {formData?.end_date
+                    ? moment(formData?.end_date).format("MMMM Do YYYY")
                     : ""}
                 </h1>
               )}
@@ -317,16 +321,16 @@ export default function HomeCareDetails() {
                   className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   name="days_week"
                   onChange={handleChange}
-                  value={formData.days_week}
+                  value={formData.days_week || ""}
                 >
                   <option value="" disabled>
-                    {/* {details?.days_week || "Select Gender"} */}
+                    {formData?.days_week || "Select "}
                   </option>
                   <option value="day">day</option>
                   <option value="24*7">24*7</option>
                 </select>
               ) : (
-                <h1 className="font-light">{details?.days_week}</h1>
+                <h1 className="font-light">{formData?.days_week}</h1>
               )}
             </div>
 
@@ -337,16 +341,16 @@ export default function HomeCareDetails() {
                   className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   name="general_specialized"
                   onChange={handleChange}
-                  value={formData.general_specialized}
+                  value={formData.general_specialized || ""}
                 >
                   <option value="" disabled>
-                    {/* {details?.general_specialized || "Select "} */}
+                    {formData?.general_specialized || "Select "}
                   </option>
                   <option value="general">general</option>
                   <option value="specialized">specialized</option>
                 </select>
               ) : (
-                <h1 className="font-light">{details?.general_specialized}</h1>
+                <h1 className="font-light">{formData?.general_specialized}</h1>
               )}
             </div>
 
@@ -357,22 +361,26 @@ export default function HomeCareDetails() {
               {isEdit ? (
                 <textarea
                   className="w-full h-24 p-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none"
-                  // placeholder={
-                  //   details?.patient_location || "Enter details here"
-                  // }
                   type="text"
-                  value={formData.patient_location}
+                  value={
+                    typeof formData?.patient_location === "object" &&
+                    formData?.patient_location !== null
+                      ? formData?.patient_location?.address
+                      : formData?.patient_location
+                  }
                   onChange={handleChange}
                   name="patient_location"
                   rows="4"
                 />
               ) : (
                 <div class="text-[0.8125rem]/5 mt-1 text-slate-600">
-                  {details?.patient_location}
+                  {typeof formData?.patient_location === "object" &&
+                  formData?.patient_location !== null
+                    ? formData?.patient_location?.address
+                    : formData?.patient_location}
                 </div>
               )}
 
-              {/* <div class="flex mt-2 font-semibold text-[0.9125rem]/5 text-teal-800"> */}
               <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
                 <h1 className="font-bold">Pincode:</h1>
                 {isEdit ? (
@@ -384,7 +392,7 @@ export default function HomeCareDetails() {
                     onChange={handleChange}
                   />
                 ) : (
-                  <h1 className="font-light">{details?.pincode}</h1>
+                  <h1 className="font-light">{formData?.pincode}</h1>
                 )}
               </div>
             </div>
@@ -394,25 +402,21 @@ export default function HomeCareDetails() {
             <div>
               <div className="bg-white  p-6 h-auto border">
                 <h1 className="text-lg font-semibold mb-3">
-                  Additional Details
+                  Additional formData
                 </h1>
 
                 <div className="flex items-center text-[0.9125rem]/5 justify-between mb-4">
                   <h1 className="font-bold">Contact Number:</h1>
                   <h1 className="font-light">
-                    +91 {details?.patient_contact_no}
+                    +91 {formData?.patient_contact_no}
                   </h1>
                 </div>
-                {/* <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
-                       <h1 className="font-bold">Booking ID:</h1>
-                       <h1 className="font-light">#HF65HH8</h1>
-                     </div> */}
 
                 <div className="flex items-center justify-between text-[0.9125rem]/5">
                   <h1 className="font-bold">Booking Date:</h1>
                   <h1 className="font-light">
                     {" "}
-                    {moment(details?.created_date).format("Do MMMM YYYY")}
+                    {moment(formData?.created_date).format("Do MMMM YYYY")}
                   </h1>
                 </div>
               </div>
@@ -427,7 +431,7 @@ export default function HomeCareDetails() {
                 {isEdit ? (
                   <textarea
                     className="w-full h-32 p-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none"
-                    // placeholder={details?.requirements || "Enter details here"}
+                    // placeholder={formData?.requirements || "Enter formData here"}
                     type="text"
                     value={formData.requirements}
                     onChange={handleChange}
@@ -436,7 +440,7 @@ export default function HomeCareDetails() {
                   />
                 ) : (
                   <div class="text-[0.8125rem]/5 mt-1 text-slate-600">
-                    {details?.requirements}
+                    {formData?.requirements}
                   </div>
                 )}
               </div>
@@ -446,17 +450,7 @@ export default function HomeCareDetails() {
                   Additional Attachment
                 </h1>
 
-                {/* <div className="flex items-center justify-between">
-                  <h1 className="font-light">Report.pdf</h1>
-                  <button className="text-sky-600">View</button>
-                </div>
-
-                <div className="flex items-center justify-between mt-4">
-                  <h1 className="font-light">Report2.pdf</h1>
-                  <button className="text-sky-600">View</button>
-                </div> */}
-
-                {Object.entries(details?.medical_documents || {}).map(
+                {Object.entries(formData?.medical_documents || {}).map(
                   ([key, url], index) => (
                     <div
                       className="flex items-center justify-between mt-4"
@@ -513,7 +507,7 @@ export default function HomeCareDetails() {
               <div className=" bg-white flex-1  p-4 md:col-span-2  lg:col-span-1 h-auto border ">
                 <div className="flex justify-between items-center mb-4">
                   <h1 className="text-lg font-semibold">Price</h1>
-                  {details?.price === null && (
+                  {formData?.price === null && (
                     <button
                       className="bg-teal-600 text-stone-50 px-6 text-sm h-8"
                       onClick={handleAddPrice}
@@ -529,7 +523,7 @@ export default function HomeCareDetails() {
                     name="price"
                     value={price}
                     onChange={handlePriceChange}
-                    disabled={details?.price !== null}
+                    disabled={formData?.price !== null}
                   />
                 </div>
               </div>
@@ -543,7 +537,7 @@ export default function HomeCareDetails() {
                     <HospitalAssistCard
                       key={index}
                       assist={nurse}
-                      details={details}
+                      formData={formData}
                       type="homecare_service"
                     />
                   ))

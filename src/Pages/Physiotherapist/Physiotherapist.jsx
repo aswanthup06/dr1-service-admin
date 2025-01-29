@@ -53,7 +53,7 @@ export default function Physiotherapist() {
       <tbody>
         {patients.map((patient, index) => (
           <tr key={index} onClick={() =>
-            navigate("/physiotherapistdetails", { state: patient })
+            navigate("/physiotherapistdetails", { state: patient.id })
           } className="hover:bg-gray-50">
             <td className="px-4 py-2 border-b">{patient?.patient_name}</td>
             <td className="px-4 py-2 border-b">{patient?.patient_contact_no}</td>

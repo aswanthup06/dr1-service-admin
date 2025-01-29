@@ -53,7 +53,7 @@ export default function HomeCare() {
         <tbody>
           {patients.map((patient, index) => (
             <tr key={index} onClick={() =>
-              navigate("/details", { state: patient })}  className="hover:bg-gray-50">
+              navigate("/details", { state: patient.id })}  className="hover:bg-gray-50">
               <td className="px-4 py-2 border-b">{patient?.patient_name}</td>
               <td className="px-4 py-2 border-b">{patient?.patient_contact_no}</td>
               <td className="px-4 py-2 border-b">{patient?.start_date ? moment(patient?.start_date).format('Do MMMM YYYY') : 'null'}</td>
