@@ -8,8 +8,8 @@ export default function HomeCare() {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate=useNavigate()
-  console.log({patients})
+  const navigate = useNavigate();
+  console.log({ patients });
   useEffect(() => {
     axios
       .get(`${BASE_URL}/services/gethomeservicereqs`)
@@ -31,8 +31,6 @@ export default function HomeCare() {
     return <div>Error: {error}</div>;
   }
 
-
-
   return (
     <div className="overflow-x-auto">
       <h1 className="text-2xl font-semibold mb-4">Home Care Booking</h1>
@@ -52,15 +50,30 @@ export default function HomeCare() {
         </thead>
         <tbody>
           {patients.map((patient, index) => (
-            <tr key={index} onClick={() =>
-              navigate("/details", { state: patient.id })}  className="hover:bg-gray-50">
+            <tr
+              key={index}
+              onClick={() => navigate("/details", { state: patient.id })}
+              className="hover:bg-gray-50"
+            >
               <td className="px-4 py-2 border-b">{patient?.patient_name}</td>
-              <td className="px-4 py-2 border-b">{patient?.patient_contact_no}</td>
-              <td className="px-4 py-2 border-b">{patient?.start_date ? moment(patient?.start_date).format('Do MMMM YYYY') : 'null'}</td>
+              <td className="px-4 py-2 border-b">
+                {patient?.patient_contact_no}
+              </td>
+              <td className="px-4 py-2 border-b">
+                {patient?.start_date
+                  ? moment(patient?.start_date, "DD-MM-YYYY").format(
+                      "DD-MM-YYYY"
+                    )
+                  : ""}
+              </td>
               <td className="px-4 py-2 border-b">{patient?.patient_age}</td>
               <td className="px-4 py-2 border-b">{patient?.patient_gender}</td>
-              <td className="px-4 py-2 border-b">{patient?.general_specialized}</td>
-              <td className="px-4 py-2 border-b">{patient?.patient_mobility}</td>
+              <td className="px-4 py-2 border-b">
+                {patient?.general_specialized}
+              </td>
+              <td className="px-4 py-2 border-b">
+                {patient?.patient_mobility}
+              </td>
               <td className="px-4 py-2 border-b">{patient?.status}</td>
             </tr>
           ))}

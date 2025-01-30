@@ -7,10 +7,7 @@ import { BASE_URL } from "../../config";
 export default function HomeCareformData() {
   const location = useLocation();
   const data_id = location.state || {};
-  console.log("datadatadatadatadatadatadatadatadata", data_id);
-  // const formData = location.state || {};
   const currentDate = moment().format("YYYY-MM-DD");
-  // console.log({ formData });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fileToView, setFileToView] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
@@ -62,7 +59,6 @@ export default function HomeCareformData() {
       const response = await axios.post(`${BASE_URL}/services/allassists`, {
         id: data_id,
       });
-      console.log("resppppppnurrr", response);
       setNurses(response.data.data);
       setLoading(false);
     } catch (err) {
@@ -96,32 +92,27 @@ export default function HomeCareformData() {
   };
   const handlePriceChange = (event) => {
     const { value } = event.target;
-
-    // Parsing the value as a number if the value is not empty, otherwise, leave it empty
     const numericValue = value === "" ? "" : parseFloat(value);
-
-    setPrice(numericValue); // Update the price state directly
+    setPrice(numericValue);
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    // if (name === "start_date") {
-    //   const formattedDate = moment(value).format("YYYY-MM-DD HH:mm:ss.SSS");
-    //   setFormdata((prevData) => ({
-    //     ...prevData,
-    //     [name]: formattedDate, // Update the start_date with the correct format
-    //   }));
-    // } else {
-    //   setFormdata((prevData) => ({
-    //     ...prevData,
-    //     [name]: value,
-    //   }));
-    // }
-    console.log(name, value);
-    setFormdata((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    if (name === "start_date" || name==="end_date") {
+      const formattedDate =
+        name === "start_date" || name==="end_date"
+          ? moment(value, "YYYY-MM-DD").format("DD-MM-YYYY")
+          : value;
+      setFormdata((prev) => ({
+        ...prev,
+        [name]: formattedDate,
+      }));
+    } else {
+      setFormdata((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmitChange = async (event) => {
@@ -131,7 +122,6 @@ export default function HomeCareformData() {
         `${BASE_URL}/services/updatehomeservice`,
         formData
       );
-      console.log(responseData);
       if (responseData.data.success) {
         alert("service updated");
         setIsEdit(false);
@@ -140,7 +130,6 @@ export default function HomeCareformData() {
         alert("failed to update the data");
       }
     } catch (err) {
-      console.log("error------>", err);
       alert("error while submitting the message");
     }
   };
@@ -164,12 +153,10 @@ export default function HomeCareformData() {
   };
 
   const isImage = (file) => {
-    // Check if the file is an image based on its extension
     return /\.(jpg|jpeg|png|gif)$/i.test(file);
   };
 
   const isPDF = (file) => {
-    // Check if the file is a PDF
     return /\.pdf$/i.test(file);
   };
 
@@ -203,7 +190,7 @@ export default function HomeCareformData() {
             </div>
             <div className="flex items-center text-[0.9125rem]/5 justify-between mb-4">
               <h1 className="font-bold">Patient Name:</h1>
-             
+
               {isEdit ? (
                 <input
                   className="w-5/12 h-8 text-right px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
@@ -261,9 +248,7 @@ export default function HomeCareformData() {
                   onChange={handleChange}
                   value={formData.patient_mobility || ""}
                 >
-                  <option value="" disabled>
-                    {/* {formData?.patient_gender || "Select Gender"} */}
-                  </option>
+                  <option value="" disabled></option>
                   <option value="walk">Walk</option>
                   <option value="wheelchair">Wheelchair</option>
                   <option value="stretcher">Stretcher</option>
@@ -280,15 +265,22 @@ export default function HomeCareformData() {
                   className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   type="date"
                   name="start_date"
-                  value={moment(formData?.start_date).format("YYYY-MM-DD")}
+                  value={
+                    formData?.start_date
+                      ? moment(formData?.start_date, "DD-MM-YYYY").format(
+                          "YYYY-MM-DD"
+                        )
+                      : ""
+                  }
                   onChange={handleChange}
-                  // onChange={(e) => console.log(e.target.value)}
                   min={currentDate}
                 />
               ) : (
                 <h1 className="font-light">
                   {formData?.start_date
-                    ? moment(formData?.start_date).format("MMMM Do YYYY")
+                    ? moment(formData?.start_date, "DD-MM-YYYY").format(
+                        "DD-MM-YYYY"
+                      )
                     : ""}
                 </h1>
               )}
@@ -301,14 +293,22 @@ export default function HomeCareformData() {
                   className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   type="date"
                   name="end_date"
-                  value={moment(formData?.end_date).format("YYYY-MM-DD")}
+                  value={
+                    formData?.end_date
+                      ? moment(formData?.end_date, "DD-MM-YYYY").format(
+                          "YYYY-MM-DD"
+                        )
+                      : ""
+                  }
                   onChange={handleChange}
                   min={currentDate}
                 />
               ) : (
                 <h1 className="font-light">
                   {formData?.end_date
-                    ? moment(formData?.end_date).format("MMMM Do YYYY")
+                    ? moment(formData?.end_date, "DD-MM-YYYY").format(
+                        "DD-MM-YYYY"
+                      )
                     : ""}
                 </h1>
               )}

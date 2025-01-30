@@ -7,7 +7,7 @@ const Navbar = () => {
       <ul className="flex space-x-4">
         <li>
           <NavLink
-            to="/"
+            to="/homecare"
             className={({ isActive }) =>
               isActive
                 ? 'text-indigo-700 bg-indigo-300 p-3'
@@ -43,43 +43,7 @@ const Navbar = () => {
           </NavLink>
         </li>
 
-        <li>
-          <NavLink
-            to="/details"
-            className={({ isActive }) =>
-              isActive
-                ? 'text-white font-semibold border-b-2 border-blue-500'
-                : 'text-gray-300 hover:text-white'
-            }
-          >
-            Home Care Details
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/hospital-assist/details"
-            className={({ isActive }) =>
-              isActive
-                ? 'text-white font-semibold border-b-2 border-blue-500'
-                : 'text-gray-300 hover:text-white'
-            }
-          >
-            Hospital Assist Details
-          </NavLink>
-        </li>
-
-        <li>
-          <NavLink
-            to="/physiotherapistdetails"
-            className={({ isActive }) =>
-              isActive
-                ? 'text-white font-semibold border-b-2 border-blue-500'
-                : 'text-gray-300 hover:text-white'
-            }
-          >
-            Physiotherapist Details
-          </NavLink>
-        </li>
+       
       </ul>
     </nav>
   );

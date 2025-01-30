@@ -2,7 +2,7 @@ import './App.css';
 import './index.css';
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HomeCare from './Pages/Home-Care/HomeCare';
 import HomeCareDetails from './Pages/Home-Care/HomeCareDetails';
@@ -15,15 +15,16 @@ import ServiceAdminLogin from './Pages/ServiceAdminLogin/ServiceAdminLogin';
 import 'remixicon/fonts/remixicon.css'
 
 function App() {
+  const location = useLocation()
   return (
-    <Router>
+    <>
+      {/* Conditionally render Navbar only if not on the /service-login route */}
+      {location.pathname !== "/" && <Navbar />}
 
-      
-      <Navbar /> {/* Include Navbar */}
       <div className="p-4"> {/* Add padding to content */}
         <Routes>
           {/* Home-Care */}
-          <Route path="/" element={<HomeCare />} />
+          <Route path="/homecare" element={<HomeCare />} />
           <Route path="/details" element={<HomeCareDetails />} />
 
           {/* Hospital-Assist */}
@@ -36,12 +37,22 @@ function App() {
 
           {/* Default route or 404 */}
           <Route path="*" element={<div>Page Not Found</div>} />
-          <Route path="/AdLo" element={<ServiceAdminLogin />} />
-
+          {/* ServiceAdminLogin route */}
+          <Route path="/" element={<ServiceAdminLogin />} />
         </Routes>
       </div>
+    </>
+  );
+}
+
+// Wrap the App component with Router
+export default function Root() {
+  return (
+    <Router>
+      <App />
     </Router>
   );
 }
 
-export default App;
+
+// export default App;

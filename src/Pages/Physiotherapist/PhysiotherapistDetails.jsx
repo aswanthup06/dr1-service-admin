@@ -96,19 +96,20 @@ export default function PhysiotherapistDetails() {
   };
   const handleChange = (event) => {
     const { name, value } = event.target;
-    if (name === "prefered_time") {
-      console.log(value);
-      const formattedTime = convertTo12HourFormat(value); // Convert 24-hour to 12-hour format
-      console.log("formattedTime", formattedTime);
-      setFormdata({
-        ...formData,
-        [name]: formattedTime,
-      });
+    if (name === "start_date") {
+      const formattedDate =
+        name === "start_date"
+          ? moment(value, "YYYY-MM-DD").format("DD-MM-YYYY")
+          : value;
+      setFormdata((prev) => ({
+        ...prev,
+        [name]: formattedDate,
+      }));
     } else {
-      setFormdata({
-        ...formData,
+      setFormdata((prevData) => ({
+        ...prevData,
         [name]: value,
-      });
+      }));
     }
   };
   function formatTime(timeString) {
@@ -244,14 +245,22 @@ export default function PhysiotherapistDetails() {
                   className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   type="date"
                   name="start_date"
-                  value={moment(formData?.start_date).format("YYYY-MM-DD")}
+                  value={
+                    formData?.start_date
+                      ? moment(formData?.start_date, "DD-MM-YYYY").format(
+                          "YYYY-MM-DD"
+                        )
+                      : ""
+                  }
                   onChange={handleChange}
                   min={currentDate}
                 />
               ) : (
                 <h1 className="font-light">
                   {formData?.start_date
-                    ? moment(formData?.start_date).format("MMMM Do YYYY")
+                    ? moment(formData?.start_date, "DD-MM-YYYY").format(
+                        "DD-MM-YYYY"
+                      )
                     : ""}
                 </h1>
               )}
@@ -291,7 +300,7 @@ export default function PhysiotherapistDetails() {
                   value={formData?.therapy_type || ""}
                 >
                   <option value="" disabled>
-                  {formData.therapy_type != null 
+                    {formData.therapy_type != null
                       ? formData.therapy_type
                       : "Select Therapy"}
                     {/* {formData?.therapy_type || "Select Therapy"} */}
@@ -324,9 +333,9 @@ export default function PhysiotherapistDetails() {
                 />
               ) : (
                 <div class="text-[0.8125rem]/5 mt-1 text-slate-600">
-                 {typeof formData?.patient_location === "object" &&
+                  {typeof formData?.patient_location === "object" &&
                   formData?.patient_location !== null
-                    ? formData?.patient_location?.address 
+                    ? formData?.patient_location?.address
                     : formData?.patient_location}
                 </div>
               )}
