@@ -4,12 +4,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import moment from "moment";
 import axios from "axios";
 import { BASE_URL } from "../../config";
+
 export default function HomeCareformData() {
   const location = useLocation();
   const data_id = location.state || {};
   const currentDate = moment().format("YYYY-MM-DD");
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [fileToView, setFileToView] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [isEdit, setIsEdit] = useState(false);
   const [nurses, setNurses] = useState([]);
   console.log({ nurses });
@@ -36,7 +38,9 @@ export default function HomeCareformData() {
       setPrice(formData?.price);
     }
   }, [formData?.price]);
-
+  // useEffect(() => {
+  //   pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js`;
+  // }, []);
   const fetchformData = async () => {
     try {
       const response = await axios.post(
@@ -98,9 +102,9 @@ export default function HomeCareformData() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    if (name === "start_date" || name==="end_date") {
+    if (name === "start_date" || name === "end_date") {
       const formattedDate =
-        name === "start_date" || name==="end_date"
+        name === "start_date" || name === "end_date"
           ? moment(value, "YYYY-MM-DD").format("DD-MM-YYYY")
           : value;
       setFormdata((prev) => ({
@@ -145,6 +149,7 @@ export default function HomeCareformData() {
   const handleView = (file) => {
     setFileToView(file);
     setIsModalOpen(true);
+    // setPdfError(false);
   };
 
   const closeModal = () => {
@@ -152,13 +157,12 @@ export default function HomeCareformData() {
     setFileToView(null);
   };
 
-  const isImage = (file) => {
-    return /\.(jpg|jpeg|png|gif)$/i.test(file);
-  };
+  // Check if the file is an image
+  const isImage = (file) => /\.(jpg|jpeg|png|gif)$/i.test(file);
 
-  const isPDF = (file) => {
-    return /\.pdf$/i.test(file);
-  };
+  // Check if the file is a PDF
+  const isPDF = (file) => /\.pdf$/i.test(file);
+  console.log({ isPDF });
 
   return (
     <div>
@@ -472,7 +476,7 @@ export default function HomeCareformData() {
               </div>
 
               {/* Modal to view the attachment */}
-              {isModalOpen && (
+              {/* {isModalOpen && (
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
                   <div className="bg-white p-4 rounded-lg">
                     <button className="text-red-600" onClick={closeModal}>
@@ -491,6 +495,84 @@ export default function HomeCareformData() {
                           width="100%"
                           height="500px"
                           title="PDF Viewer"
+                        />
+                      ) : (
+                        <p>Unsupported file type</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )} */}
+              {/* {isModalOpen && (
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+                  <div className="bg-white p-4 rounded-lg max-w-3xl">
+                    <button className="text-red-600" onClick={closeModal}>
+                      Close
+                    </button>
+                    <div className="mt-4">
+                      {isImage(fileToView?.url) ? (
+                        <img
+                          src={fileToView?.url}
+                          alt={fileToView?.name}
+                          className="max-w-full max-h-96"
+                        />
+                      ) : isPDF(fileToView?.url) ? (
+                        <>
+                          <Document
+                            file={fileToView?.url}
+                            onLoadSuccess={onDocumentLoadSuccess}
+                            onLoadError={onDocumentLoadError}
+                          >
+                            <Page pageNumber={pageNumber} />
+                          </Document>
+                          <p>
+                            Page {pageNumber} of {numPages}
+                          </p>
+                          <button
+                            onClick={() =>
+                              setPageNumber((prev) => Math.max(prev - 1, 1))
+                            }
+                            disabled={pageNumber <= 1}
+                          >
+                            Previous
+                          </button>
+                          <button
+                            onClick={() =>
+                              setPageNumber((prev) =>
+                                Math.min(prev + 1, numPages)
+                              )
+                            }
+                            disabled={pageNumber >= numPages}
+                          >
+                            Next
+                          </button>
+                        </>
+                      ) : (
+                        <p>Unsupported file type</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )} */}
+              {isModalOpen && (
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+                  <div className="bg-white p-4 rounded-lg max-w-3xl">
+                    <button className="text-red-600" onClick={closeModal}>
+                      Close
+                    </button>
+                    <div className="mt-4">
+                      {isImage(fileToView?.url) ? (
+                        <img
+                          src={fileToView?.url}
+                          alt={fileToView?.name}
+                          className="max-w-full max-h-96"
+                        />
+                      ) : isPDF(fileToView?.url) ? (
+                        <iframe
+                          src={`https://docs.google.com/gview?url=${fileToView?.url}&embedded=true`}
+                          width="100%"
+                          height="500px"
+                          style={{ border: "none" }}
                         />
                       ) : (
                         <p>Unsupported file type</p>
