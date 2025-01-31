@@ -554,33 +554,43 @@ export default function HomeCareformData() {
                   </div>
                 </div>
               )} */}
-              {isModalOpen && (
-                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-                  <div className="bg-white p-4 rounded-lg max-w-3xl">
-                    <button className="text-red-600" onClick={closeModal}>
-                      Close
-                    </button>
-                    <div className="mt-4">
-                      {isImage(fileToView?.url) ? (
-                        <img
-                          src={fileToView?.url}
-                          alt={fileToView?.name}
-                          className="max-w-full max-h-96"
-                        />
-                      ) : isPDF(fileToView?.url) ? (
-                        <iframe
-                          src={`https://docs.google.com/gview?url=${fileToView?.url}&embedded=true`}
-                          width="100%"
-                          height="500px"
-                          style={{ border: "none" }}
-                        />
-                      ) : (
-                        <p>Unsupported file type</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
+{isModalOpen && (
+  <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+    {/* Modal Container */}
+    <div className="bg-white p-4 max-h-[80%] overflow-auto w-[40%] relative">
+      
+      {/* Close Button - Positioned Absolutely to Stay Fixed */}
+      <button 
+        className="absolute bottom-10 right-10 text-white h-10 w-10 bg-slate-900 rounded-full flex items-center justify-center"
+        onClick={closeModal}
+      >
+        <i className="ri-close-large-line"></i>
+      </button>
+
+      {/* File Preview */}
+      <div className="overflow-auto">
+        {isImage(fileToView?.url) ? (
+          <img
+            src={fileToView?.url}
+            alt={fileToView?.name}
+            className="w-full max-h-[600px] object-contain"
+          />
+        ) : isPDF(fileToView?.url) ? (
+          <iframe
+            src={`https://docs.google.com/gview?url=${fileToView?.url}&embedded=true`}
+            width="100%"
+            height="700px"
+            style={{ border: "none" }}
+          />
+        ) : (
+          <p>Unsupported file type</p>
+        )}
+      </div>
+      
+    </div>
+  </div>
+)}
+
             </div>
           </div>
 
