@@ -41,7 +41,7 @@ export default function HospitalAssistDetails() {
   const handleAddingPrice = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3003/services/priceadd",
+        `${BASE_URL}/services/priceadd`,
         {
           id: passedState_id,
           price: price,
