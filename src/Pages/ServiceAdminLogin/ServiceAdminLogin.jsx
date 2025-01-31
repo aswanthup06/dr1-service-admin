@@ -11,16 +11,21 @@ export default function ServiceAdminLogin() {
   const handleLogin = () => {
     const user = username.trim().toLowerCase();
     const pass = password.trim().toLowerCase();
+    let userData = null;
 
     if (user === "adm_physio" && pass === "physiotherapy") {
+      userData = { userId: "1", userType: "physiotherapist" };
       navigate("/physiotherapist");
     } else if (user === "adm_hospitalassist" && pass === "hospitalassistant") {
+      userData = { userId: "2", userType: "hospitalassist" };
       navigate("/hospital-assist");
     } else if (user === "adm_homecare" && pass === "homecare") {
+      userData = { userId: "3", userType: "homecare" };
       navigate("/homecare");
     } else {
       alert("Invalid credentials");
     }
+    localStorage.setItem('user', JSON.stringify(userData));
   };
   return (
     <div className="w-full h-[calc(100dvh-50px)] flex flex-col items-center justify-center">

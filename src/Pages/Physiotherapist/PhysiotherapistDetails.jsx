@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from "react";
 import HospitalAssistCard from "../../components/HospitalAssistCard";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import moment from "moment";
 import axios from "axios";
 import { BASE_URL } from "../../config";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 export default function PhysiotherapistDetails() {
   const location = useLocation();
   const data_id = location.state || {};
-  console.log("datadatadatadatadatadatadatadatadata", data_id);
+ 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const [formData, setDetails] = useState({});
+
   const currentDate = moment().format("YYYY-MM-DD");
   const [nurses, setNurses] = useState([]);
 
   const [isEdit, setIsEdit] = useState(false);
-  const navigate = useNavigate();
+
   const [formData, setFormdata] = useState({
-    id: "",
+    id: data_id,
     patient_name: "",
     patient_mobility: "",
     patient_age: "",
@@ -30,7 +33,7 @@ export default function PhysiotherapistDetails() {
     pincode: "",
   });
 
-  console.log({ formData });
+ 
   const fetchdetails = async () => {
     try {
       const response = await axios.post(
@@ -49,6 +52,7 @@ export default function PhysiotherapistDetails() {
     }
   };
   const fetchNurses = async () => {
+    setLoading(true);
     try {
       const response = await axios.post(
         `${BASE_URL}/services/getphysioassists`,
@@ -57,6 +61,7 @@ export default function PhysiotherapistDetails() {
         }
       );
       setNurses(response.data.data);
+    
       setLoading(false);
     } catch (err) {
       setError("Failed to fetch nurses.");
@@ -77,9 +82,9 @@ export default function PhysiotherapistDetails() {
       );
 
       if (responseData.data.success) {
-        alert("service updated");
+         toast.success("Service updated successfully!")
         setIsEdit(false);
-        navigate(0);
+        // navigate(0);
       } else {
         alert("failed to update the data");
       }
@@ -112,14 +117,7 @@ export default function PhysiotherapistDetails() {
       }));
     }
   };
-  function formatTime(timeString) {
-    const [hours, minutes] = timeString.split(":");
-    const hour = parseInt(hours, 10);
-    const ampm = hour >= 12 ? "PM" : "AM";
-    const formattedHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour; // Convert 24-hour to 12-hour format
-    const formattedMinutes = minutes.padStart(2, "0"); // Ensure minutes have two digits
-    return `${formattedHour}:${formattedMinutes} ${ampm}`;
-  }
+ 
   function convertTo24HourFormat(timeString) {
     if (
       !timeString ||
@@ -134,41 +132,24 @@ export default function PhysiotherapistDetails() {
 
     hours = parseInt(hours, 10);
     if (period === "PM" && hours !== 12) {
-      hours += 12; // Convert PM hours to 24-hour format
+      hours += 12; 
     } else if (period === "AM" && hours === 12) {
-      hours = 0; // Midnight case: 12 AM should be 00 in 24-hour format
+      hours = 0; 
     }
 
     return `${hours.toString().padStart(2, "0")}:${minutes}`;
   }
-  function convertTo12HourFormat(timeString) {
-    if (
-      !timeString ||
-      typeof timeString !== "string" ||
-      !timeString.includes(":")
-    ) {
-      console.error("Invalid time format");
-      return null;
-    }
-    const [hours, minutes] = timeString?.split(":");
-    let hour = parseInt(hours, 10);
-    const ampm = hour >= 12 ? "PM" : "AM";
-    if (hour > 12) {
-      hour -= 12;
-    } else if (hour === 0) {
-      hour = 12; // 12 AM (midnight)
-    }
-
-    return `${hour}:${minutes} ${ampm}`;
-  }
+  
 
   return (
     <div>
+        <ToastContainer />
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Physiotherapy Details</h1>
         <div className="flex gap-2">
-          <button className="bg-blue-700 px-4 h-10 text-white font-light">
-            Confirmed<i className="ri-arrow-down-s-line ml-3 "></i>
+          <button disabled className="bg-blue-700 uppercase px-4 h-10 text-white font-light">
+            {formData.status ? formData.status : "STATUS" }
+            {/* <i className="ri-arrow-down-s-line ml-3 "></i> */}
           </button>
           <button
             onClick={(event) => {
@@ -290,7 +271,7 @@ export default function PhysiotherapistDetails() {
             </div>
 
             <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
-              <h1 className="font-bold">Therapy Type</h1>
+              <h1 className="font-bold">Therapy Type :</h1>
 
               {isEdit ? (
                 <select
@@ -303,7 +284,7 @@ export default function PhysiotherapistDetails() {
                     {formData.therapy_type != null
                       ? formData.therapy_type
                       : "Select Therapy"}
-                    {/* {formData?.therapy_type || "Select Therapy"} */}
+                  
                   </option>
                   <option value="orthopedic">Orthopedic</option>
                   <option value="neurological">Neurological</option>
@@ -391,8 +372,9 @@ export default function PhysiotherapistDetails() {
                   <HospitalAssistCard
                     key={index}
                     assist={nurse}
-                    formData={formData}
+                    details={formData}
                     type="physiotherapist_service"
+                    onAssignSuccess={fetchNurses}
                   />
                 ))
               ) : (

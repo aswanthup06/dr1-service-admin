@@ -1,8 +1,16 @@
 import axios from "axios";
 import React from "react";
 import { BASE_URL } from "../config";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
-export default function HospitalAssistCard({ assist, details, type }) {
+export default function HospitalAssistCard({
+  assist,
+  details,
+  type,
+  onAssignSuccess,
+}) {
   console.log({ type });
   const handleAssignClick = async () => {
     if (assist?.button_status === "assign") {
@@ -12,15 +20,17 @@ export default function HospitalAssistCard({ assist, details, type }) {
           id: details?.id,
           type: type,
         };
-console.log({data})
-        const response = await axios.post(`${BASE_URL}/services/assignassist`, 
-          data,
+        console.log({ data });
+        const response = await axios.post(
+          `${BASE_URL}/services/assignassist`,
+          data
         );
 
         if (response.data.success) {
-          alert("assist assigned successfully!");
+          toast.success("assist assigned successfully!");
+          onAssignSuccess();
         } else {
-          alert("Failed to assign assist.");
+          toast.error("Failed to assign assist.!");
         }
       } catch (error) {
         console.error("Error assigning assist:", error);
@@ -30,6 +40,7 @@ console.log({data})
   };
   return (
     <div class="mb-2 last:mb-0 pointer-events-auto rounded-lg bg-white p-4 text-[0.8125rem]/5 shadow-xl shadow-black/5 hover:bg-slate-50 ring-1 ring-slate-700/10">
+      <ToastContainer />
       <div class="flex justify-between">
         <div className="w-full flex justify-between items-center mb-3">
           <div class="font-extrabold text-slate-900">

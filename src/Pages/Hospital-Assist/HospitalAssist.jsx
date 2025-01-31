@@ -45,7 +45,7 @@ if(error){
       </thead>
       <tbody>
         {hospAssitant.map((patient, index) => (
-          <tr key={index} onClick={() => navigate('/hospital-assist/details', { state: patient })} 
+          <tr key={index} onClick={() => navigate('/hospital-assist/details', { state: patient.id })} 
           className="hover:bg-gray-50">
             <td className="px-4 py-2 border-b">{patient?.patient_name}</td>
             <td className="px-4 py-2 border-b">{patient?.patient_contact_no}</td>
