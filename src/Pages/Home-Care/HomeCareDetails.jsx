@@ -14,7 +14,7 @@ export default function HomeCareformData() {
 
   const [isEdit, setIsEdit] = useState(false);
   const [nurses, setNurses] = useState([]);
-  console.log({ nurses });
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [formData, setFormdata] = useState({
@@ -436,7 +436,6 @@ export default function HomeCareformData() {
                 {isEdit ? (
                   <textarea
                     className="w-full h-32 p-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none"
-                    // placeholder={formData?.requirements || "Enter formData here"}
                     type="text"
                     value={formData.requirements}
                     onChange={handleChange}
@@ -622,18 +621,24 @@ export default function HomeCareformData() {
                 <h1 className="text-lg font-semibold mb-6">
                   Recommended Nurse
                 </h1>
-                {nurses.length > 0 ? (
-                  nurses.map((nurse, index) => (
-                    <HospitalAssistCard
-                      key={index}
-                      assist={nurse}
-                      formData={formData}
-                      type="homecare_service"
-                      onAssignSuccess={fetchNurses}
-                    />
-                  ))
+                {formData.start_date && formData.end_date ? (
+                  <>
+                    {nurses.length > 0 ? (
+                      nurses.map((nurse, index) => (
+                        <HospitalAssistCard
+                          key={index}
+                          assist={nurse}
+                          formData={formData}
+                          type="homecare_service"
+                          onAssignSuccess={fetchNurses}
+                        />
+                      ))
+                    ) : (
+                      <p>No nurses available.</p>
+                    )}{" "}
+                  </>
                 ) : (
-                  <p>No nurses available.</p>
+                  <p>Choose Start Date and End Date.</p>
                 )}
               </div>
             </div>
