@@ -21,6 +21,7 @@ export default function HospitalAssistDetails() {
     patient_location: "",
     assist_type: "",
     start_date: "",
+    end_date: "",
     time: "",
     days_week: "",
     hospital_location: "",
@@ -28,6 +29,7 @@ export default function HospitalAssistDetails() {
     requirements: "",
   });
   console.log({ formData });
+  const currentDate = moment().format("YYYY-MM-DD");
   const [price, setPrice] = useState(formData.price || "");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -40,14 +42,11 @@ export default function HospitalAssistDetails() {
 
   const handleAddingPrice = async () => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/services/priceadd`,
-        {
-          id: passedState_id,
-          price: price,
-          type: "hospitalassist_service",
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/services/priceadd`, {
+        id: passedState_id,
+        price: price,
+        type: "hospitalassist_service",
+      });
       if (response.data.success) {
         alert("Price added successfully");
       } else {
@@ -72,10 +71,21 @@ export default function HospitalAssistDetails() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormdata((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    if (name === "start_date" || name === "end_date") {
+      const formattedDate =
+        name === "start_date" || name === "end_date"
+          ? moment(value, "YYYY-MM-DD").format("DD-MM-YYYY")
+          : value;
+      setFormdata((prev) => ({
+        ...prev,
+        [name]: formattedDate,
+      }));
+    } else {
+      setFormdata((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmitChange = async (event) => {
@@ -118,9 +128,12 @@ export default function HospitalAssistDetails() {
 
   const fetchNurses = async () => {
     try {
-      const response = await axios.post(`${BASE_URL}/services/allassists`, {
-        id: passedState_id,
-      });
+      const response = await axios.post(
+        `${BASE_URL}/services/gethospitalassists`,
+        {
+          id: passedState_id,
+        }
+      );
 
       setNurses(response.data.data);
     } catch (err) {
@@ -156,7 +169,7 @@ export default function HospitalAssistDetails() {
         <h1 className="text-2xl font-semibold">Hospital Assist Details</h1>
         <div className="flex gap-2">
           <button className="bg-blue-700 uppercase px-4 h-10 text-white font-light">
-          {formData.status ? formData.status : "STATUS" }
+            {formData.status ? formData.status : "STATUS"}
             {/* <i className="ri-arrow-down-s-line ml-3 "></i> */}
           </button>
           <button
@@ -246,7 +259,7 @@ export default function HospitalAssistDetails() {
               )}
             </div>
 
-            <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
+            {/* <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
               <h1 className="font-bold">Start Date:</h1>
               {isEdit ? (
                 <input
@@ -259,18 +272,74 @@ export default function HospitalAssistDetails() {
               ) : (
                 <h1 className="font-light">{formData?.start_date}</h1>
               )}
+            </div> */}
+            <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
+              <h1 className="font-bold">Start Date:</h1>
+              {isEdit ? (
+                <input
+                  className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  type="date"
+                  name="start_date"
+                  value={
+                    formData?.start_date
+                      ? moment(formData?.start_date, "DD-MM-YYYY").format(
+                          "YYYY-MM-DD"
+                        )
+                      : ""
+                  }
+                  onChange={handleChange}
+                  min={currentDate}
+                />
+              ) : (
+                <h1 className="font-light">
+                  {formData?.start_date
+                    ? moment(formData?.start_date, "DD-MM-YYYY").format(
+                        "DD-MM-YYYY"
+                      )
+                    : ""}
+                </h1>
+              )}
             </div>
 
+            {/* <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
+              <h1 className="font-bold">End Date:</h1>
+              {isEdit ? (
+                <input
+                  className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  type="date"
+                  name="end_date"
+                  onChange={handleChange}
+                  value={formData.end_date}
+                />
+              ) : (
+                <h1 className="font-light">{formData?.end_date}</h1>
+              )}
+            </div> */}
             <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
               <h1 className="font-bold">End Date:</h1>
               {isEdit ? (
                 <input
                   className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   type="date"
-                  // onChange={(e) => console.log(e.target.value)}
+                  name="end_date"
+                  value={
+                    formData?.end_date
+                      ? moment(formData?.end_date, "DD-MM-YYYY").format(
+                          "YYYY-MM-DD"
+                        )
+                      : ""
+                  }
+                  onChange={handleChange}
+                  min={currentDate}
                 />
               ) : (
-                <h1 className="font-light">{formData?.start_date}</h1>
+                <h1 className="font-light">
+                  {formData?.end_date
+                    ? moment(formData?.end_date, "DD-MM-YYYY").format(
+                        "DD-MM-YYYY"
+                      )
+                    : ""}
+                </h1>
               )}
             </div>
 
@@ -572,18 +641,24 @@ export default function HospitalAssistDetails() {
                 <h1 className="text-lg font-semibold mb-6">
                   Recommended Assistant
                 </h1>
-                {nurse.length > 0 ? (
-                  nurse.map((nurse, index) => (
-                    <HospitalAssistCard
-                      key={index}
-                      assist={nurse}
-                      details={passedState_id}
-                      type="homecare_service"
-                      onAssignSuccess={fetchNurses}
-                    />
-                  ))
+                {formData.start_date && formData.end_date ? (
+                  <>
+                    {nurse.length > 0 ? (
+                      nurse.map((nurse, index) => (
+                        <HospitalAssistCard
+                          key={index}
+                          assist={nurse}
+                          details={formData}
+                          type="hospitalassist_service"
+                          onAssignSuccess={fetchNurses}
+                        />
+                      ))
+                    ) : (
+                      <p>No Assistant available.</p>
+                    )}
+                  </>
                 ) : (
-                  <p>No Assistant available.</p>
+                  <p>Choose Start Date and End Date.</p>
                 )}
               </div>
             </div>

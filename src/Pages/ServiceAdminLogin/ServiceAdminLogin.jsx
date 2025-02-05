@@ -31,7 +31,7 @@ export default function ServiceAdminLogin() {
     <div className="w-full h-[calc(100dvh-50px)] flex flex-col items-center justify-center">
       <img
         className="w-14 h-14 object-cover rounded-full"
-        src="https://images.unsplash.com/photo-1737366984875-fb81751f6655?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        src='./doconelogo.jpg'
         alt=""
       />
       <h1 className="text-2xl font-bold mt-4">Welcome to Dr1 </h1>

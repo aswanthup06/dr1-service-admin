@@ -60,7 +60,7 @@ export default function HomeCareformData() {
   };
   const fetchNurses = async () => {
     try {
-      const response = await axios.post(`${BASE_URL}/services/allassists`, {
+      const response = await axios.post(`${BASE_URL}/services/gethomecareassists`, {
         id: data_id,
       });
       setNurses(response.data.data);

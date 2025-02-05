@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { BASE_URL } from '../../config'
 
 export default function HospitalAssist() {
   const[hospAssitant, sethospassitant] = useState([])
@@ -10,7 +11,7 @@ export default function HospitalAssist() {
   const navigate = useNavigate()
   useEffect(()=>{
    
-    axios.get("http://localhost:3003/services/gethospitalassistantreqs").then((response)=>{
+    axios.get(`${BASE_URL}/services/gethospitalassistantreqs`).then((response)=>{
       sethospassitant(response.data.data)
       console.log("response-------->",response.data.data)
       setloading(false)
