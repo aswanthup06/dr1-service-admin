@@ -4,6 +4,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import moment from "moment";
 import axios from "axios";
 import { BASE_URL } from "../../config";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 export default function HomeCareformData() {
   const location = useLocation();
@@ -60,9 +63,12 @@ export default function HomeCareformData() {
   };
   const fetchNurses = async () => {
     try {
-      const response = await axios.post(`${BASE_URL}/services/gethomecareassists`, {
-        id: data_id,
-      });
+      const response = await axios.post(
+        `${BASE_URL}/services/gethomecareassists`,
+        {
+          id: data_id,
+        }
+      );
       setNurses(response.data.data);
       setLoading(false);
     } catch (err) {
@@ -85,7 +91,7 @@ export default function HomeCareformData() {
       });
 
       if (response.data.success) {
-        alert("Price added successfully!");
+        toast.success("Price added successfully!");
       } else {
         alert("Failed to add price.");
       }
@@ -127,7 +133,7 @@ export default function HomeCareformData() {
         formData
       );
       if (responseData.data.success) {
-        alert("service updated");
+        toast.success("updated successfully!");
         setIsEdit(false);
         navigate(0);
       } else {
@@ -166,6 +172,7 @@ export default function HomeCareformData() {
 
   return (
     <div>
+      <ToastContainer />
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Home Care Details</h1>
         <div className="flex gap-2">

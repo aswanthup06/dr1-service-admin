@@ -4,6 +4,10 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../../config";
 import moment from "moment";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+
 
 export default function HospitalAssistDetails() {
   const location = useLocation();
@@ -48,7 +52,7 @@ export default function HospitalAssistDetails() {
         type: "hospitalassist_service",
       });
       if (response.data.success) {
-        alert("Price added successfully");
+         toast.success("Price added successfully!");
       } else {
         alert("error while adding the price");
       }
@@ -97,7 +101,7 @@ export default function HospitalAssistDetails() {
         formData
       );
       if (responseData.data.success) {
-        alert("service updated");
+         toast.success("updated successfully!");
         setIsEdit(false);
       } else {
         alert("failed to update the data");
@@ -165,6 +169,7 @@ export default function HospitalAssistDetails() {
 
   return (
     <div>
+        <ToastContainer />
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Hospital Assist Details</h1>
         <div className="flex gap-2">
