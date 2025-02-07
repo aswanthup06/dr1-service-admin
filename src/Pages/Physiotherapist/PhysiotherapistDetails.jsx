@@ -11,7 +11,7 @@ import { ToastContainer } from "react-toastify";
 export default function PhysiotherapistDetails() {
   const location = useLocation();
   const data_id = location.state || {};
- 
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -33,7 +33,6 @@ export default function PhysiotherapistDetails() {
     pincode: "",
   });
 
- 
   const fetchdetails = async () => {
     try {
       const response = await axios.post(
@@ -61,7 +60,7 @@ export default function PhysiotherapistDetails() {
         }
       );
       setNurses(response.data.data);
-    
+
       setLoading(false);
     } catch (err) {
       setError("Failed to fetch nurses.");
@@ -82,7 +81,7 @@ export default function PhysiotherapistDetails() {
       );
 
       if (responseData.data.success) {
-         toast.success("Service updated successfully!")
+        toast.success("Service updated successfully!");
         setIsEdit(false);
         // navigate(0);
       } else {
@@ -117,7 +116,7 @@ export default function PhysiotherapistDetails() {
       }));
     }
   };
- 
+
   function convertTo24HourFormat(timeString) {
     if (
       !timeString ||
@@ -132,23 +131,25 @@ export default function PhysiotherapistDetails() {
 
     hours = parseInt(hours, 10);
     if (period === "PM" && hours !== 12) {
-      hours += 12; 
+      hours += 12;
     } else if (period === "AM" && hours === 12) {
-      hours = 0; 
+      hours = 0;
     }
 
     return `${hours.toString().padStart(2, "0")}:${minutes}`;
   }
-  
 
   return (
     <div>
-        <ToastContainer />
+      <ToastContainer />
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Physiotherapy Details</h1>
         <div className="flex gap-2">
-          <button disabled className="bg-blue-700 uppercase px-4 h-10 text-white font-light">
-            {formData.status ? formData.status : "STATUS" }
+          <button
+            disabled
+            className="bg-blue-700 uppercase px-4 h-10 text-white font-light"
+          >
+            {formData.status ? formData.status : "STATUS"}
             {/* <i className="ri-arrow-down-s-line ml-3 "></i> */}
           </button>
           <button
@@ -284,7 +285,6 @@ export default function PhysiotherapistDetails() {
                     {formData.therapy_type != null
                       ? formData.therapy_type
                       : "Select Therapy"}
-                  
                   </option>
                   <option value="orthopedic">Orthopedic</option>
                   <option value="neurological">Neurological</option>
@@ -366,19 +366,24 @@ export default function PhysiotherapistDetails() {
               <h1 className="text-lg font-semibold mb-6">
                 Recommended Therapist
               </h1>
-
-              {nurses.length > 0 ? (
-                nurses.map((nurse, index) => (
-                  <HospitalAssistCard
-                    key={index}
-                    assist={nurse}
-                    details={formData}
-                    type="physiotherapist_service"
-                    onAssignSuccess={fetchNurses}
-                  />
-                ))
+              {formData.start_date ? (
+                <>
+                  {nurses.length > 0 ? (
+                    nurses.map((nurse, index) => (
+                      <HospitalAssistCard
+                        key={index}
+                        assist={nurse}
+                        details={formData}
+                        type="physiotherapist_service"
+                        onAssignSuccess={fetchNurses}
+                      />
+                    ))
+                  ) : (
+                    <p>No nurses available.</p>
+                  )}
+                </>
               ) : (
-                <p>No nurses available.</p>
+                <p>Choose Start Date</p>
               )}
             </div>
           </div>

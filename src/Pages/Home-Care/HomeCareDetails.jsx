@@ -375,9 +375,8 @@ export default function HomeCareformData() {
                   className="w-full h-24 p-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none"
                   type="text"
                   value={
-                    typeof formData?.patient_location === "object" &&
-                    formData?.patient_location !== null
-                      ? formData?.patient_location?.address
+                    Array.isArray(formData?.patient_location) && formData?.patient_location?.length > 0
+                      ? formData?.patient_location[0]?.address
                       : formData?.patient_location
                   }
                   onChange={handleChange}
@@ -386,10 +385,9 @@ export default function HomeCareformData() {
                 />
               ) : (
                 <div class="text-[0.8125rem]/5 mt-1 text-slate-600">
-                  {typeof formData?.patient_location === "object" &&
-                  formData?.patient_location !== null
-                    ? formData?.patient_location?.address
-                    : formData?.patient_location}
+                  {Array.isArray(formData?.patient_location) && formData?.patient_location?.length > 0
+                      ? formData?.patient_location[0]?.address
+                      : formData?.patient_location}
                 </div>
               )}
 
@@ -635,7 +633,7 @@ export default function HomeCareformData() {
                         <HospitalAssistCard
                           key={index}
                           assist={nurse}
-                          formData={formData}
+                          details={formData}
                           type="homecare_service"
                           onAssignSuccess={fetchNurses}
                         />

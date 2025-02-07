@@ -48,7 +48,7 @@ export default function HospitalAssistCard({
             <h1 className="text-xs font-light">{assist?.phone_no}</h1>
           </div>
           <button
-            className="bg-green-600 text-white py-1 px-3 rounded-full"
+            className="bg-green-600 text-white uppercase py-1 px-3 rounded-full"
             onClick={handleAssignClick}
             disabled={assist?.button_status !== "assign"}
           >
@@ -60,7 +60,7 @@ export default function HospitalAssistCard({
 
       <div className="flex gap-4">
         <div class="mt-2 font-semibold text-teal-800">{assist?.pincode}</div>
-        <div class="mt-2 font-semibold text-blue-500">{assist?.gender}</div>
+        <div class="mt-2 uppercase font-semibold text-blue-500">{assist?.gender}</div>
       </div>
     </div>
   );
