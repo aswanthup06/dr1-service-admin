@@ -26,7 +26,14 @@ export default function HomeCareformData() {
     patient_mobility: "",
     patient_age: "",
     patient_gender: "",
-    patient_location: "",
+    patient_location: [
+      {
+        address: "",
+        latitude: "",
+        longitude: "",
+        pincode: "",
+      },
+    ],
     start_date: "",
     end_date: "",
     time: "",
@@ -116,6 +123,16 @@ export default function HomeCareformData() {
       setFormdata((prev) => ({
         ...prev,
         [name]: formattedDate,
+      }));
+    } else if (name === "patient_location") {
+      setFormdata((prevData) => ({
+        ...prevData,
+        patient_location: [
+          {
+            ...prevData.patient_location[0],
+            address: value,
+          },
+        ],
       }));
     } else {
       setFormdata((prevData) => ({
@@ -374,20 +391,23 @@ export default function HomeCareformData() {
                 <textarea
                   className="w-full h-24 p-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none"
                   type="text"
-                  value={
-                    Array.isArray(formData?.patient_location) && formData?.patient_location?.length > 0
-                      ? formData?.patient_location[0]?.address
-                      : formData?.patient_location
-                  }
+                  // value={
+                  //   Array.isArray(formData?.patient_location) && formData?.patient_location?.length > 0
+                  //     ? formData?.patient_location[0]?.address
+                  //     : formData?.patient_location
+                  // }
+                  value={formData?.patient_location?.[0]?.address || ""}
                   onChange={handleChange}
                   name="patient_location"
                   rows="4"
                 />
               ) : (
                 <div class="text-[0.8125rem]/5 mt-1 text-slate-600">
-                  {Array.isArray(formData?.patient_location) && formData?.patient_location?.length > 0
+                  {/* {Array.isArray(formData?.patient_location) && formData?.patient_location?.length > 0
                       ? formData?.patient_location[0]?.address
-                      : formData?.patient_location}
+                      : formData?.patient_location} */}
+                  {formData?.patient_location?.[0]?.address ||
+                    "No Address Provided"}
                 </div>
               )}
 

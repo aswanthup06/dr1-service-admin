@@ -26,13 +26,20 @@ export default function PhysiotherapistDetails() {
     patient_mobility: "",
     patient_age: "",
     patient_gender: "",
-    patient_location: "",
+    patient_location: [
+      {
+        address: "",
+        latitude: "",
+        longitude: "",
+        pincode: "",
+      },
+    ],
     start_date: "",
     therapy_type: "",
     prefered_time: "",
     pincode: "",
   });
-
+  console.log({ formData });
   const fetchdetails = async () => {
     try {
       const response = await axios.post(
@@ -108,6 +115,16 @@ export default function PhysiotherapistDetails() {
       setFormdata((prev) => ({
         ...prev,
         [name]: formattedDate,
+      }));
+    } else if (name === "patient_location") {
+      setFormdata((prevData) => ({
+        ...prevData,
+        patient_location: [
+          {
+            ...prevData.patient_location[0],
+            address: value,
+          },
+        ],
       }));
     } else {
       setFormdata((prevData) => ({
@@ -307,17 +324,20 @@ export default function PhysiotherapistDetails() {
                 <textarea
                   className="w-full h-24 p-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none"
                   type="text"
-                  value={formData.patient_location}
+                  // value={formData.patient_location}
+                  value={formData?.patient_location?.[0]?.address || ""}
                   onChange={handleChange}
                   name="patient_location"
                   rows="4"
                 />
               ) : (
                 <div class="text-[0.8125rem]/5 mt-1 text-slate-600">
-                  {typeof formData?.patient_location === "object" &&
+                  {/* {typeof formData?.patient_location === "object" &&
                   formData?.patient_location !== null
                     ? formData?.patient_location?.address
-                    : formData?.patient_location}
+                    : formData?.patient_location} */}
+                  {formData?.patient_location?.[0]?.address ||
+                    "No Address Provided"}
                 </div>
               )}
               <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
