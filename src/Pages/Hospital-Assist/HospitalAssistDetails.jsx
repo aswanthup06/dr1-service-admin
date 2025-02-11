@@ -4,13 +4,10 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../../config";
 import moment from "moment";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
-
 
 export default function HospitalAssistDetails() {
   const location = useLocation();
+    const currentDate = moment().format("YYYY-MM-DD");
   const passedState_id = location.state || {};
   console.log({ passedState_id });
   const [fileToView, setFileToView] = useState(null);
@@ -22,18 +19,31 @@ export default function HospitalAssistDetails() {
     patient_age: "",
     patient_gender: "",
     hospital_name: "",
-    patient_location: "",
+    patient_location:[
+      {
+        address:"",
+        latitude:"",
+        longitude:""
+      }
+    ],
     assist_type: "",
     start_date: "",
-    end_date: "",
+    end_date:"",
     time: "",
     days_week: "",
-    hospital_location: "",
+    hospital_location:[
+      {
+        address:"",
+        latitude:"",
+        longitude:""
+      }
+    ],
     pickup_type: "",
     requirements: "",
+    vehicle_type:"",
+    vehicle_id:""
   });
   console.log({ formData });
-  const currentDate = moment().format("YYYY-MM-DD");
   const [price, setPrice] = useState(formData.price || "");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,13 +56,22 @@ export default function HospitalAssistDetails() {
 
   const handleAddingPrice = async () => {
     try {
-      const response = await axios.post(`${BASE_URL}/services/priceadd`, {
-        id: passedState_id,
-        price: price,
-        type: "hospitalassist_service",
-      });
+      const numericPrice = parseInt(price, 10); // Convert price to integer
+
+      if (isNaN(numericPrice)) {
+        alert("Please enter a valid number for price.");
+        return;
+      }
+      const response = await axios.post(`
+        ${BASE_URL}/services/priceadd`,
+        {
+          id: passedState_id,
+          price: numericPrice,
+          type: "hospitalassist_service",
+        }
+      );
       if (response.data.success) {
-         toast.success("Price added successfully!");
+        alert("Price added successfully");
       } else {
         alert("error while adding the price");
       }
@@ -73,35 +92,43 @@ export default function HospitalAssistDetails() {
     setIsEdit(!isEdit);
   };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    if (name === "start_date" || name === "end_date") {
-      const formattedDate =
-        name === "start_date" || name === "end_date"
-          ? moment(value, "YYYY-MM-DD").format("DD-MM-YYYY")
-          : value;
-      setFormdata((prev) => ({
-        ...prev,
-        [name]: formattedDate,
-      }));
-    } else {
-      setFormdata((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
-  };
+  // const handleChange = (event) => {
+  //   const { name, value } = event.target;
+  //   setFormdata((prevData) => ({
+  //     ...prevData,
+  //     [name]: value,
+  //   }));
+  // };
+    const handleChange = (event) => {
+      const { name, value } = event.target;
+      if (name === "start_date" || name === "end_date") {
+        const formattedDate =
+          name === "start_date" || name === "end_date"
+            ? moment(value, "YYYY-MM-DD").format("DD-MM-YYYY")
+            : value;
+        setFormdata((prev) => ({
+          ...prev,
+          [name]: formattedDate,
+        }));
+      } else {
+        setFormdata((prevData) => ({
+          ...prevData,
+          [name]: value,
+        }));
+      }
+      
+    };
 
   const handleSubmitChange = async (event) => {
     // alert("hhhhhhh")
     event.preventDefault();
     try {
-      const responseData = await axios.post(
-        `${BASE_URL}/services/updatehospitalassistservice`,
+      const responseData = await axios.post(`
+        ${BASE_URL}/services/updatehospitalassistservice`,
         formData
       );
       if (responseData.data.success) {
-         toast.success("updated successfully!");
+        alert("service updated");
         setIsEdit(false);
       } else {
         alert("failed to update the data");
@@ -132,12 +159,9 @@ export default function HospitalAssistDetails() {
 
   const fetchNurses = async () => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/services/gethospitalassists`,
-        {
-          id: passedState_id,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/services/allassists`, {
+        id: passedState_id,
+      });
 
       setNurses(response.data.data);
     } catch (err) {
@@ -169,12 +193,11 @@ export default function HospitalAssistDetails() {
 
   return (
     <div>
-        <ToastContainer />
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Hospital Assist Details</h1>
         <div className="flex gap-2">
           <button className="bg-blue-700 uppercase px-4 h-10 text-white font-light">
-            {formData.status ? formData.status : "STATUS"}
+          {formData.status ? formData.status : "STATUS" }
             {/* <i className="ri-arrow-down-s-line ml-3 "></i> */}
           </button>
           <button
@@ -264,98 +287,70 @@ export default function HospitalAssistDetails() {
               )}
             </div>
 
-            {/* <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
-              <h1 className="font-bold">Start Date:</h1>
-              {isEdit ? (
-                <input
-                  className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                  type="date"
-                  name="start_date"
-                  onChange={handleChange}
-                  value={formData.start_date}
-                />
-              ) : (
-                <h1 className="font-light">{formData?.start_date}</h1>
-              )}
-            </div> */}
             <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
-              <h1 className="font-bold">Start Date:</h1>
-              {isEdit ? (
-                <input
-                  className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                  type="date"
-                  name="start_date"
-                  value={
-                    formData?.start_date
-                      ? moment(formData?.start_date, "DD-MM-YYYY").format(
-                          "YYYY-MM-DD"
-                        )
-                      : ""
-                  }
-                  onChange={handleChange}
-                  min={currentDate}
-                />
-              ) : (
-                <h1 className="font-light">
-                  {formData?.start_date
-                    ? moment(formData?.start_date, "DD-MM-YYYY").format(
-                        "DD-MM-YYYY"
-                      )
-                    : ""}
-                </h1>
-              )}
-            </div>
+                        <h1 className="font-bold">Start Date:</h1>
+                        {isEdit ? (
+                          <input
+                            className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                            type="date"
+                            name="start_date"
+                            value={
+                              formData?.start_date
+                                ? moment(formData?.start_date, "DD-MM-YYYY").format(
+                                    "YYYY-MM-DD"
+                                  )
+                                : ""
+                            }
+                            onChange={handleChange}
+                            min={currentDate}
+                          />
+                        ) : (
+                          <h1 className="font-light">
+                            {formData?.start_date
+                              ? moment(formData?.start_date, "DD-MM-YYYY").format(
+                                  "DD-MM-YYYY"
+                                )
+                              : ""}
+                          </h1>
+                        )}
+                      </div>
 
-            {/* <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
-              <h1 className="font-bold">End Date:</h1>
-              {isEdit ? (
-                <input
-                  className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                  type="date"
-                  name="end_date"
-                  onChange={handleChange}
-                  value={formData.end_date}
-                />
-              ) : (
-                <h1 className="font-light">{formData?.end_date}</h1>
-              )}
-            </div> */}
-            <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
-              <h1 className="font-bold">End Date:</h1>
-              {isEdit ? (
-                <input
-                  className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                  type="date"
-                  name="end_date"
-                  value={
-                    formData?.end_date
-                      ? moment(formData?.end_date, "DD-MM-YYYY").format(
-                          "YYYY-MM-DD"
-                        )
-                      : ""
-                  }
-                  onChange={handleChange}
-                  min={currentDate}
-                />
-              ) : (
-                <h1 className="font-light">
-                  {formData?.end_date
-                    ? moment(formData?.end_date, "DD-MM-YYYY").format(
-                        "DD-MM-YYYY"
-                      )
-                    : ""}
-                </h1>
-              )}
-            </div>
+        <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
+                      <h1 className="font-bold">End Date:</h1>
+                      {isEdit ? (
+                        <input
+                          className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                          type="date"
+                          name="end_date"
+                          value={
+                            formData?.end_date
+                              ? moment(formData?.end_date, "DD-MM-YYYY").format(
+                                  "YYYY-MM-DD"
+                                )
+                              : ""
+                          }
+                          onChange={handleChange}
+                          min={currentDate}
+                        />
+                      ) : (
+                        <h1 className="font-light">
+                          {formData?.end_date
+                            ? moment(formData?.end_date, "DD-MM-YYYY").format(
+                                "DD-MM-YYYY"
+                              )
+                            : ""}
+                        </h1>
+                      )}
+                    </div>
 
             <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
               <h1 className="font-bold">Gender:</h1>
               {isEdit ? (
                 <select
                   className="w-5/12 h-8 px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                  name="gender"
+                  name="patient_gender"
                   onChange={handleChange}
-                  value={formData?.gender}
+                  value={formData?.patient_gender}
                 >
                   <option value="" disabled>
                     {formData?.patient_gender || "Select Gender"}
@@ -433,22 +428,27 @@ export default function HospitalAssistDetails() {
                 <textarea
                   className="w-full h-24 p-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none"
                   name="hospital_location"
-                  value={
-                    typeof formData?.hospital_location === "object" &&
-                    formData?.hospital_location !== null
-                      ? formData?.hospital_location?.address
-                      : formData?.hospital_location
-                  }
+                  // value={
+                  //   typeof formData?.hospital_location === "object" &&
+                  //   formData?.hospital_location !== null
+                  //     ? formData?.hospital_location?.address
+                  //     : formData?.hospital_location
+                  // }
+                  value={formData?.hospital_location?.[0]?.address || ""}
                   onChange={handleChange}
+                  type="text"
                   rows="4"
                 />
               ) : (
-                <div class="text-[0.8125rem]/5 mt-1 text-slate-600">
-                  {typeof formData?.hospital_location === "object" &&
-                  formData?.hospital_location !== null
-                    ? formData?.hospital_location?.address
-                    : formData?.hospital_location}
-                </div>
+                // <div class="text-[0.8125rem]/5 mt-1 text-slate-600">
+                //   {typeof formData?.hospital_location === "object" &&
+                //   formData?.hospital_location !== null
+                //     ? formData?.hospital_location?.address
+                //     : formData?.hospital_location}
+                // </div>
+                <div className="text-[0.8125rem]/5 mt-1 text-slate-600">
+      {formData?.hospital_location?.[0]?.address || "No Address Provided"}
+    </div>
               )}
 
               <div class="mt-2 font-semibold text-[0.9125rem]/5 text-teal-800">
@@ -464,22 +464,27 @@ export default function HospitalAssistDetails() {
                 <textarea
                   className="w-full h-24 p-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none"
                   name="patient_location"
-                  value={
-                    typeof formData?.patient_location === "object" &&
-                    formData?.patient_location !== null
-                      ? formData?.patient_location?.address
-                      : formData?.patient_location
-                  }
+                  // value={
+                  //   typeof formData?.patient_location === "object" &&
+                  //   formData?.patient_location !== null
+                  //     ? formData?.patient_location?.address
+                  //     : formData?.patient_location
+                  // }
+                  value={formData?.patient_location?.[0]?.address || ""}
                   onChange={handleChange}
                   rows="4"
                 />
               ) : (
-                <div class="text-[0.8125rem]/5 mt-1 text-slate-600">
-                  {typeof formData?.patient_location === "object" &&
-                  formData?.patient_location !== null
-                    ? formData?.patient_location?.address
-                    : formData?.patient_location}
-                </div>
+                // <div class="text-[0.8125rem]/5 mt-1 text-slate-600">
+                //   {typeof formData?.patient_location === "object" &&
+                //   formData?.patient_location !== null
+                //     ? formData?.patient_location?.address
+                //     : formData?.patient_location}
+                // </div>
+                <div className="text-[0.8125rem]/5 mt-1 text-slate-600">
+                {formData?.patient_location?.[0]?.address || "No Address Provided"}
+              </div>
+                        
               )}
 
               <div class="mt-2 font-semibold text-[0.9125rem]/5 text-teal-800">
@@ -571,7 +576,7 @@ export default function HospitalAssistDetails() {
                           />
                         ) : isPDF(fileToView?.url) ? (
                           <iframe
-                            src={`https://docs.google.com/gview?url=${fileToView?.url}&embedded=true`}
+                          src={`https://docs.google.com/gview?url=${fileToView?.url}&embedded=true`}
                             width="100%"
                             height="500px"
                             style={{ border: "none" }}
@@ -596,25 +601,39 @@ export default function HospitalAssistDetails() {
 
                 <div>
                   <h1 className="font-bold">Vehicle Type</h1>
-
-                  <select className="border w-full h-10 px-4 mt-2">
+                  {isEdit ? (
+                  <select className="border w-full h-10 px-4 mt-2"
+                  name="vehicle_type"
+                  value={formData.vehicle_type}
+                  onChange={handleChange}
+                  >
                     <option value="" disabled>
-                      {formData?.pickup_type || "Vehicle type"}
+                      {formData.vehicle_type || "select Vehicletype"}
                     </option>
                     <option value="ambulance">Ambulance</option>
                     <option value="car">car</option>
                   </select>
+                  ) : (
+                    <h1 className="font-light">{formData.vehicle_type || "no data"}</h1>  
+                  )}
                 </div>
 
                 <div className="mt-4">
                   <h1 className="font-bold">Vehicle Number</h1>
+                  {isEdit ? (
                   <input
                     className="border w-full h-10 px-4 mt-2"
                     type="text"
-                    name=""
-                    id=""
+                    name="vehicle_id"
+                    // id=""
+                    value={formData.vehicle_id}
+                    onChange={handleChange}
                     placeholder="KL18HY89"
+
                   />
+                  ) : (
+                    <h1 className="font-light">{formData.vehicle_id || "no data"}</h1>
+                  )}
                 </div>
               </div>
 
@@ -636,7 +655,8 @@ export default function HospitalAssistDetails() {
                     className="border w-full h-10 px-4"
                     type="text"
                     name="price"
-                    value={formData?.price || ""}
+                    // value={formData?.price || ""}
+                    value={price}
                     onChange={handlePriceChange}
                   />
                 </div>
@@ -646,24 +666,18 @@ export default function HospitalAssistDetails() {
                 <h1 className="text-lg font-semibold mb-6">
                   Recommended Assistant
                 </h1>
-                {formData.start_date && formData.end_date ? (
-                  <>
-                    {nurse.length > 0 ? (
-                      nurse.map((nurse, index) => (
-                        <HospitalAssistCard
-                          key={index}
-                          assist={nurse}
-                          details={formData}
-                          type="hospitalassist_service"
-                          onAssignSuccess={fetchNurses}
-                        />
-                      ))
-                    ) : (
-                      <p>No Assistant available.</p>
-                    )}
-                  </>
+                {nurse.length > 0 ? (
+                  nurse.map((nurse, index) => (
+                    <HospitalAssistCard
+                      key={index}
+                      assist={nurse}
+                      details={passedState_id}
+                      type="homecare_service"
+                      onAssignSuccess={fetchNurses}
+                    />
+                  ))
                 ) : (
-                  <p>Choose Start Date and End Date.</p>
+                  <p>No Assistant available.</p>
                 )}
               </div>
             </div>
