@@ -4,6 +4,9 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../../config";
 import moment from "moment";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 export default function HospitalAssistDetails() {
   const location = useLocation();
@@ -71,9 +74,9 @@ export default function HospitalAssistDetails() {
         }
       );
       if (response.data.success) {
-        alert("Price added successfully");
+        toast.success("Price added successfully!");
       } else {
-        alert("error while adding the price");
+        toast.error("error while adding the price");
       }
     } catch (err) {
       console.log("error------->", err);
@@ -128,7 +131,7 @@ export default function HospitalAssistDetails() {
         formData
       );
       if (responseData.data.success) {
-        alert("service updated");
+        toast.success("updated successfully!");
         setIsEdit(false);
       } else {
         alert("failed to update the data");
@@ -141,6 +144,7 @@ export default function HospitalAssistDetails() {
 
   const fetchformData = async () => {
     try {
+      setLoading(true);
       const response = await axios.post(
         `${BASE_URL}/services/getorderdetails`,
         {
@@ -193,8 +197,17 @@ export default function HospitalAssistDetails() {
 
   return (
     <div>
+      <ToastContainer />
+       {loading ? (
+        <div className="flex justify-center items-center h-40">
+          <span className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></span>
+        </div>
+      ) : (
+        <>
       <div className="flex justify-between items-center">
+        
         <h1 className="text-2xl font-semibold">Hospital Assist Details</h1>
+        
         <div className="flex gap-2">
           <button className="bg-blue-700 uppercase px-4 h-10 text-white font-light">
           {formData.status ? formData.status : "STATUS" }
@@ -686,6 +699,8 @@ export default function HospitalAssistDetails() {
           </div>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }

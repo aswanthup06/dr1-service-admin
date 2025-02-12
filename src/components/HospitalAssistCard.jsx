@@ -4,7 +4,7 @@ import { BASE_URL } from "../config";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-
+import { PhoneCall } from "lucide-react";
 export default function HospitalAssistCard({
   assist,
   details,
@@ -45,7 +45,14 @@ export default function HospitalAssistCard({
         <div className="w-full flex justify-between items-center mb-3">
           <div class="font-extrabold text-slate-900">
             {assist?.name}
-            <h1 className="text-xs font-light">{assist?.phone_no}</h1>
+            <button
+        className="text-xs font-light flex items-center text-blue-600 hover:underline"
+        onClick={() => assist?.phone_no && window.open(`tel:${assist.phone_no}`, "_self")}
+      >
+        <PhoneCall size={14} className="mr-1" />
+        {assist?.phone_no}
+      </button>
+            {/* <h1 className="text-xs font-light">{assist?.phone_no}</h1> */}
           </div>
           <button
             className="bg-green-600 text-white uppercase py-1 px-3 rounded-full"
