@@ -7,6 +7,7 @@ import { BASE_URL } from "../../config";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import AddressModal from "../../components/AddressModal";
 
 export default function HomeCareformData() {
   const location = useLocation();
@@ -14,7 +15,7 @@ export default function HomeCareformData() {
   const currentDate = moment().format("YYYY-MM-DD");
   const [fileToView, setFileToView] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [nurses, setNurses] = useState([]);
 
@@ -206,6 +207,25 @@ export default function HomeCareformData() {
   // Check if the file is a PDF
   const isPDF = (file) => /\.pdf$/i.test(file);
   console.log({ isPDF });
+
+  const handleChooseAddress = () => {
+    setIsModalOpen1(true);
+  };
+
+  const handleSelectAddress = ({ formattedAddress, postalCode, lat, lng }) => {
+    setFormdata({
+      ...formData,
+      patient_location: [
+        {
+          address: formattedAddress,
+          pincode: postalCode,
+          latitude: lat,
+          longitude: lng,
+        },
+      ],
+      pincode: postalCode,
+    });
+  };
 
   return (
     <div>
@@ -411,7 +431,7 @@ export default function HomeCareformData() {
                   )}
                 </div>
 
-                <div>
+                {/* <div>
                   <h1 className="mb-2 text-[0.9125rem]/5 font-bold mt-4">
                     Home Address
                   </h1>
@@ -419,11 +439,7 @@ export default function HomeCareformData() {
                     <textarea
                       className="w-full h-24 p-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none"
                       type="text"
-                      // value={
-                      //   Array.isArray(formData?.patient_location) && formData?.patient_location?.length > 0
-                      //     ? formData?.patient_location[0]?.address
-                      //     : formData?.patient_location
-                      // }
+                     
                       value={formData?.patient_location?.[0]?.address || ""}
                       onChange={handleChange}
                       name="patient_location"
@@ -431,9 +447,7 @@ export default function HomeCareformData() {
                     />
                   ) : (
                     <div class="text-[0.8125rem]/5 mt-1 text-slate-600">
-                      {/* {Array.isArray(formData?.patient_location) && formData?.patient_location?.length > 0
-                      ? formData?.patient_location[0]?.address
-                      : formData?.patient_location} */}
+                     
                       {formData?.patient_location?.[0]?.address ||
                         "No Address Provided"}
                     </div>
@@ -458,6 +472,60 @@ export default function HomeCareformData() {
                       <h1 className="font-light">{formData?.pincode}</h1>
                     )}
                   </div>
+                </div> */}
+                <div>
+                  <h1 className="mb-2 text-[0.9125rem]/5 font-bold mt-4">
+                    Home Address
+                  </h1>
+                  {isEdit ? (
+                    <div className="flex items-center gap-2">
+                      <textarea
+                        className="w-full h-24 p-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                        type="text"
+                        value={formData?.patient_location?.[0]?.address || ""}
+                        onChange={handleChange}
+                        name="patient_location"
+                        rows="4"
+                      />
+                      <button
+                        className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
+                        onClick={handleChooseAddress}
+                      >
+                        Choose Address
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="text-[0.8125rem]/5 mt-1 text-slate-600">
+                      {formData?.patient_location?.[0]?.address ||
+                        "No Address Provided"}
+                    </div>
+                  )}
+                  <br />
+                  {/* <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
+                    <h1 className="font-bold">Pincode:</h1>
+                    {isEdit ? (
+                      <input
+                        className="w-5/12 h-8 text-right px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        type="text"
+                        name="pincode"
+                        value={formData.pincode}
+                        onChange={handleChange}
+                      />
+                    ) : (
+                      <h1 className="font-light">{formData?.pincode}</h1>
+                    )}
+                  </div> */}
+                  <div class="mt-2 font-semibold text-[0.9125rem]/5 text-teal-800">
+                    {formData?.patient_location?.[0]?.pincode}
+                  </div>
+
+                  {isModalOpen1 && (
+                    <AddressModal
+                      isOpen={isModalOpen1}
+                      onClose={() => setIsModalOpen1(false)}
+                      onSelectAddress={handleSelectAddress}
+                    />
+                  )}
                 </div>
               </div>
 
@@ -533,85 +601,6 @@ export default function HomeCareformData() {
                     {/* modallllllllll */}
                   </div>
 
-                  {/* Modal to view the attachment */}
-                  {/* {isModalOpen && (
-                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-                  <div className="bg-white p-4 rounded-lg">
-                    <button className="text-red-600" onClick={closeModal}>
-                      Close
-                    </button>
-                    <div className="mt-4">
-                      {isImage(fileToView.url) ? (
-                        <img
-                          src={fileToView.url}
-                          alt={fileToView.name}
-                          className="max-w-full max-h-96"
-                        />
-                      ) : isPDF(fileToView.url) ? (
-                        <iframe
-                          src={fileToView.url}
-                          width="100%"
-                          height="500px"
-                          title="PDF Viewer"
-                        />
-                      ) : (
-                        <p>Unsupported file type</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )} */}
-                  {/* {isModalOpen && (
-                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-                  <div className="bg-white p-4 rounded-lg max-w-3xl">
-                    <button className="text-red-600" onClick={closeModal}>
-                      Close
-                    </button>
-                    <div className="mt-4">
-                      {isImage(fileToView?.url) ? (
-                        <img
-                          src={fileToView?.url}
-                          alt={fileToView?.name}
-                          className="max-w-full max-h-96"
-                        />
-                      ) : isPDF(fileToView?.url) ? (
-                        <>
-                          <Document
-                            file={fileToView?.url}
-                            onLoadSuccess={onDocumentLoadSuccess}
-                            onLoadError={onDocumentLoadError}
-                          >
-                            <Page pageNumber={pageNumber} />
-                          </Document>
-                          <p>
-                            Page {pageNumber} of {numPages}
-                          </p>
-                          <button
-                            onClick={() =>
-                              setPageNumber((prev) => Math.max(prev - 1, 1))
-                            }
-                            disabled={pageNumber <= 1}
-                          >
-                            Previous
-                          </button>
-                          <button
-                            onClick={() =>
-                              setPageNumber((prev) =>
-                                Math.min(prev + 1, numPages)
-                              )
-                            }
-                            disabled={pageNumber >= numPages}
-                          >
-                            Next
-                          </button>
-                        </>
-                      ) : (
-                        <p>Unsupported file type</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )} */}
                   {isModalOpen && (
                     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
                       {/* Modal Container */}
@@ -697,7 +686,7 @@ export default function HomeCareformData() {
                               key={index}
                               assist={nurse}
                               details={formData}
-                              type="homecare_service"                              
+                              type="homecare_service"
                               onAssignSuccess={() => {
                                 fetchNurses();
                                 fetchformData();

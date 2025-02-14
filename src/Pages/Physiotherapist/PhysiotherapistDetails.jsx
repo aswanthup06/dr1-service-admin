@@ -394,7 +394,7 @@ export default function PhysiotherapistDetails() {
                         rows="4"
                       />
                       <button
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
                         onClick={handleChooseAddress}
                       >
                         Choose Address
@@ -407,7 +407,7 @@ export default function PhysiotherapistDetails() {
                     </div>
                   )}
                   <br />
-                  <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
+                  {/* <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
                     <h1 className="font-bold">Pincode:</h1>
                     {isEdit ? (
                       <input
@@ -420,7 +420,11 @@ export default function PhysiotherapistDetails() {
                     ) : (
                       <h1 className="font-light">{formData?.pincode}</h1>
                     )}
+                  </div> */}
+                  <div class="mt-2 font-semibold text-[0.9125rem]/5 text-teal-800">
+                    {formData?.patient_location?.[0]?.pincode}
                   </div>
+
                   {/* <button
                     className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
                     onClick={() => setIsEdit(!isEdit)}
