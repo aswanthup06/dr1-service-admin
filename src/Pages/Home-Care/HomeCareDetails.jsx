@@ -697,8 +697,11 @@ export default function HomeCareformData() {
                               key={index}
                               assist={nurse}
                               details={formData}
-                              type="homecare_service"
-                              onAssignSuccess={fetchNurses}
+                              type="homecare_service"                              
+                              onAssignSuccess={() => {
+                                fetchNurses();
+                                fetchformData();
+                              }}
                             />
                           ))
                         ) : (

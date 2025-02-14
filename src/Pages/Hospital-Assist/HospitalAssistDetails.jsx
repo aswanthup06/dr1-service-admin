@@ -75,6 +75,7 @@ export default function HospitalAssistDetails() {
       );
       if (response.data.success) {
         toast.success("Price added successfully!");
+        fetchformData()
       } else {
         toast.error("error while adding the price");
       }
@@ -685,8 +686,11 @@ export default function HospitalAssistDetails() {
                       key={index}
                       assist={nurse}
                       details={passedState_id}
-                      type="homecare_service"
-                      onAssignSuccess={fetchNurses}
+                      type="homecare_service"                     
+                      onAssignSuccess={() => {
+                        fetchNurses();
+                        fetchformData();
+                      }}
                     />
                   ))
                 ) : (

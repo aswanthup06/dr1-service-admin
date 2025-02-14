@@ -7,6 +7,7 @@ import { BASE_URL } from "../../config";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import AddressModal from "../../components/AddressModal";
 
 export default function PhysiotherapistDetails() {
   const location = useLocation();
@@ -39,6 +40,25 @@ export default function PhysiotherapistDetails() {
     prefered_time: "",
     pincode: "",
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleChooseAddress = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleSelectAddress = ({ formattedAddress, postalCode, lat, lng }) => {
+    setFormdata({
+      ...formData,
+      patient_location: [
+        {
+          address: formattedAddress,
+          pincode: postalCode,
+          latitude: lat,
+          longitude: lng,
+        },
+      ],
+      pincode: postalCode,
+    });
+  };
   console.log({ formData });
   const fetchdetails = async () => {
     try {
@@ -323,7 +343,7 @@ export default function PhysiotherapistDetails() {
                   )}
                 </div>
 
-                <div>
+                {/* <div>
                   <h1 className="mb-2 text-[0.9125rem]/5 font-bold mt-4">
                     Home Address
                   </h1>
@@ -331,7 +351,7 @@ export default function PhysiotherapistDetails() {
                     <textarea
                       className="w-full h-24 p-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none"
                       type="text"
-                      // value={formData.patient_location}
+                    
                       value={formData?.patient_location?.[0]?.address || ""}
                       onChange={handleChange}
                       name="patient_location"
@@ -339,10 +359,7 @@ export default function PhysiotherapistDetails() {
                     />
                   ) : (
                     <div class="text-[0.8125rem]/5 mt-1 text-slate-600">
-                      {/* {typeof formData?.patient_location === "object" &&
-                  formData?.patient_location !== null
-                    ? formData?.patient_location?.address
-                    : formData?.patient_location} */}
+                     
                       {formData?.patient_location?.[0]?.address ||
                         "No Address Provided"}
                     </div>
@@ -361,6 +378,63 @@ export default function PhysiotherapistDetails() {
                       <h1 className="font-light">{formData?.pincode}</h1>
                     )}
                   </div>
+                </div> */}
+                <div>
+                  <h1 className="mb-2 text-[0.9125rem]/5 font-bold mt-4">
+                    Home Address
+                  </h1>
+                  {isEdit ? (
+                    <div className="flex items-center gap-2">
+                      <textarea
+                        className="w-full h-24 p-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                        type="text"
+                        value={formData?.patient_location?.[0]?.address || ""}
+                        onChange={handleChange}
+                        name="patient_location"
+                        rows="4"
+                      />
+                      <button
+                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        onClick={handleChooseAddress}
+                      >
+                        Choose Address
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="text-[0.8125rem]/5 mt-1 text-slate-600">
+                      {formData?.patient_location?.[0]?.address ||
+                        "No Address Provided"}
+                    </div>
+                  )}
+                  <br />
+                  <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
+                    <h1 className="font-bold">Pincode:</h1>
+                    {isEdit ? (
+                      <input
+                        className="w-5/12 h-8 text-right px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        type="text"
+                        name="pincode"
+                        value={formData.pincode}
+                        onChange={handleChange}
+                      />
+                    ) : (
+                      <h1 className="font-light">{formData?.pincode}</h1>
+                    )}
+                  </div>
+                  {/* <button
+                    className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                    onClick={() => setIsEdit(!isEdit)}
+                  >
+                    {isEdit ? "Save" : "Edit"}
+                  </button> */}
+
+                  {isModalOpen && (
+                    <AddressModal
+                      isOpen={isModalOpen}
+                      onClose={() => setIsModalOpen(false)}
+                      onSelectAddress={handleSelectAddress}
+                    />
+                  )}
                 </div>
               </div>
 
@@ -402,7 +476,10 @@ export default function PhysiotherapistDetails() {
                             assist={nurse}
                             details={formData}
                             type="physiotherapist_service"
-                            onAssignSuccess={fetchNurses}
+                            onAssignSuccess={() => {
+                              fetchNurses();
+                              fetchdetails();
+                            }}
                           />
                         ))
                       ) : (

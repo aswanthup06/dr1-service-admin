@@ -1,0 +1,131 @@
+.setlocationmodal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .searchmoblocation {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  
+  .searchmoblocation input {
+    width: 100%;
+    padding: 10px 40px 10px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .searchmoblocationi {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+  }
+  
+  .searchmoblocationicross {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    cursor: pointer;
+  }
+  
+  .searchlocationsuggestionscontainer {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+  
+  .searchlocationsuggestionplaces {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .searchlocationsuggestionplaces:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .searchlocationsuggestionplaces i {
+    margin-right: 10px;
+    color: #888;
+  }
+  
+  .use-currentlocation-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .use-currentlocation-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .avilablelocation {
+    margin-top: 20px;
+  }
+  
+  .avilablelocation h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+  
+  .avilablelocation .flex {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .avilablelocation .flex i {
+    margin-right: 10px;
+    color: #888;
+  }
+  
+  .loading-text {
+    text-align: center;
+    color: #888;
+    margin-top: 10px;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: flex-end; /* Aligns button to the right */
+    padding: 10px;
+  }
+  
+  .close-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .close-button svg {
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .close-button:hover svg {
+    color: #ff0000;
+  }
+  
