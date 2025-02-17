@@ -455,7 +455,7 @@ export default function HospitalAssistDetails() {
                       <option value="" disabled>
                         {formData?.pickup_type || "Pick Up"}
                       </option>
-                      <option value="door">door to door</option>
+                      <option value="door_to_door">door to door</option>
                       <option value="hospital">Hospital only</option>
                     </select>
                   ) : (
