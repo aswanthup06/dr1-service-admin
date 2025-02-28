@@ -501,20 +501,7 @@ export default function HomeCareformData() {
                     </div>
                   )}
                   <br />
-                  {/* <div className="flex items-center justify-between mb-4 text-[0.9125rem]/5">
-                    <h1 className="font-bold">Pincode:</h1>
-                    {isEdit ? (
-                      <input
-                        className="w-5/12 h-8 text-right px-2 bg-slate-100 border border-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                        type="text"
-                        name="pincode"
-                        value={formData.pincode}
-                        onChange={handleChange}
-                      />
-                    ) : (
-                      <h1 className="font-light">{formData?.pincode}</h1>
-                    )}
-                  </div> */}
+                 
                   <div class="mt-2 font-semibold text-[0.9125rem]/5 text-teal-800">
                     {formData?.patient_location?.[0]?.pincode}
                   </div>

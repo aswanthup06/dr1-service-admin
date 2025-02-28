@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BASE_URL } from '../../config'
+import moment from "moment";
 
 export default function HospitalAssist() {
   const[hospAssitant, sethospassitant] = useState([])
@@ -37,6 +38,7 @@ if(error){
         <tr className="bg-gray-100 text-left">
           <th className="px-4 py-2 border-b">Patient Name</th>
           <th className="px-4 py-2 border-b">Contact Number</th>
+          <th className="px-4 py-2 border-b">Start Date</th>
           <th className="px-4 py-2 border-b">Age</th>
           <th className="px-4 py-2 border-b">Gender</th>
           <th className="px-4 py-2 border-b">Out Patient/In Patient</th>
@@ -50,6 +52,13 @@ if(error){
           className="hover:bg-gray-50">
             <td className="px-4 py-2 border-b">{patient?.patient_name}</td>
             <td className="px-4 py-2 border-b">{patient?.patient_contact_no}</td>
+             <td className="px-4 py-2 border-b">
+                            {patient?.start_date
+                              ? moment(patient?.start_date, "DD-MM-YYYY").format(
+                                  "DD-MM-YYYY"
+                                )
+                              : ""}
+                          </td>
             <td className="px-4 py-2 border-b">{patient?.patient_age}</td>
             <td className="px-4 py-2 border-b">{patient?.patient_gender}</td>
             <td className="px-4 py-2 border-b">{patient?.assist_type}</td>

@@ -100,32 +100,77 @@ export default function HospitalAssistDetails() {
     setIsEdit(!isEdit);
   };
 
+  
   // const handleChange = (event) => {
   //   const { name, value } = event.target;
-  //   setFormdata((prevData) => ({
-  //     ...prevData,
-  //     [name]: value,
-  //   }));
+  //   if (name === "start_date" || name === "end_date") {
+  //     const formattedDate =
+  //       name === "start_date" || name === "end_date"
+  //         ? moment(value, "YYYY-MM-DD").format("DD-MM-YYYY")
+  //         : value;
+  //     setFormdata((prev) => ({
+  //       ...prev,
+  //       [name]: formattedDate,
+  //     }));
+  //   } else {
+  //     setFormdata((prevData) => ({
+  //       ...prevData,
+  //       [name]: value,
+  //     }));
+  //   }
   // };
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    if (name === "start_date" || name === "end_date") {
-      const formattedDate =
-        name === "start_date" || name === "end_date"
-          ? moment(value, "YYYY-MM-DD").format("DD-MM-YYYY")
-          : value;
-      setFormdata((prev) => ({
-        ...prev,
-        [name]: formattedDate,
-      }));
-    } else {
-      setFormdata((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
-  };
+     const handleChange = (event) => {
+       let { name, value } = event.target;
+       if (name === "start_date" || name === "end_date") {
+         const formattedDate =
+           name === "start_date" || name === "end_date"
+             ? moment(value, "YYYY-MM-DD").format("DD-MM-YYYY")
+             : value;
+         setFormdata((prev) => ({
+           ...prev,
+           [name]: formattedDate,
+         }));
+       } else if (name === "patient_location") {
+         setFormdata((prevData) => ({
+           ...prevData,
+           patient_location: [
+             {
+               ...prevData.patient_location[0],
+               address: value,
+             },
+           ],
+         }));
+       } else if (name === "pincode") {
+         value = value.replace(/\D/g, "");
+   
+         // Restrict to 6 digits
+         if (value.length > 6) {
+           value = value.slice(0, 6);
+         }
+   
+         setFormdata((prev) => ({ ...prev, [name]: value }));
+       } else {
+         setFormdata((prevData) => ({
+           ...prevData,
+           [name]: value,
+         }));
+       }
+     };
 
+     const handleSelectAddress = ({ formattedAddress, postalCode, lat, lng }) => {
+      setFormdata({
+        ...formData,
+        patient_location: [
+          {
+            address: formattedAddress,
+            pincode: postalCode,
+            latitude: lat,
+            longitude: lng,
+          },
+        ],
+        pincode: postalCode,
+      });
+    };
   const handleSubmitChange = async (event) => {
     // alert("hhhhhhh")
     event.preventDefault();
@@ -207,20 +252,7 @@ export default function HospitalAssistDetails() {
     setIsModalOpen2(true);
   };
 
-  const handleSelectAddress = ({ formattedAddress, postalCode, lat, lng }) => {
-    setFormdata((prevFormData) => ({
-      ...prevFormData,
-      patient_location: [
-        {
-          address: formattedAddress,
-          pincode: postalCode,
-          latitude: lat,
-          longitude: lng,
-        },
-      ],
-      pincode: postalCode,
-    }));
-  };
+
   const handleSelectAddressHospital = ({
     formattedAddress,
     postalCode,
@@ -758,6 +790,7 @@ export default function HospitalAssistDetails() {
                         <button
                           className="bg-teal-600 text-stone-50 px-6 text-sm h-8"
                           onClick={handleAddingPrice}
+                          disabled={price !== ""}
                         >
                           Add
                         </button>
@@ -772,6 +805,7 @@ export default function HospitalAssistDetails() {
                         // value={formData?.price || ""}
                         value={price}
                         onChange={handlePriceChange}
+                        disabled={formData?.price !== null}
                       />
                     </div>
                    
